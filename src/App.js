@@ -15,7 +15,7 @@ const App = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/">
+        <Route path="/" exact>
           {token ? <Redirect to="/home" /> : <Redirect to="/login" />}
         </Route>
         <Route path="/login">
