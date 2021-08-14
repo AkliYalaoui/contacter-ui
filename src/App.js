@@ -5,28 +5,26 @@ import {
   Switch,
 } from "react-router-dom";
 
-import { useState } from "react";
-import Login from "./pages/Loging";
+import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from './pages/Home';
+import Home from "./pages/Home";
+import { useAuth } from "./context/AuthProvider";
 
 const App = () => {
-  const [token] = useState(false);
+  const { user } = useAuth();
   return (
     <Router>
       <Switch>
         <Route path="/" exact>
-          {token ? <Redirect to="/home" /> : <Redirect to="/login" />}
+          {user ? <Redirect to="/home" /> : <Redirect to="/login" />}
         </Route>
         <Route path="/login">
-          {token ? <Redirect to="/home" /> : <Login />}
+          {user ? <Redirect to="/home" /> : <Login />}
         </Route>
         <Route path="/register">
-          {token ? <Redirect to="/home" /> : <Register />}
+          {user ? <Redirect to="/home" /> : <Register />}
         </Route>
-        <Route path="/home">
-          {token ? <Home/> : <Redirect to="/login"/>}
-        </Route>
+        <Route path="/home">{user ? <Home /> : <Redirect to="/login" />}</Route>
       </Switch>
     </Router>
   );
