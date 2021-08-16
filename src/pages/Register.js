@@ -49,11 +49,15 @@ const Register = () => {
           setRegisterError(data.error);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        setRegisterError("something went wrong,please try again");
+      });
   };
 
   return (
-    <div className="container">
+    <div>
       {loading && (
         <Alert>
           <b className="capitalize">Loading!</b> Trying to sign you in
@@ -94,6 +98,7 @@ const Register = () => {
             </div>
             <TextArea
               label={"about"}
+              placeholder="Brief description about your profile"
               onValueChanged={(val) => updateForm("about", val)}
             />
             <FormFile

@@ -44,14 +44,20 @@ const Login = () => {
           setLoginError(data.error);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        setLoginError("something went wrong,please try again");
+      });
   };
 
   return (
-    <div className="container">
-      {loading && <Alert>
-        <b className="capitalize">Loading!</b> Trying to sign you in
-      </Alert>}
+    <div>
+      {loading && (
+        <Alert>
+          <b className="capitalize">Loading!</b> Trying to sign you in
+        </Alert>
+      )}
       <header className="shadow">
         <Logo />
       </header>
