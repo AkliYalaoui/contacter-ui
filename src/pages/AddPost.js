@@ -8,7 +8,6 @@ import { BsCardImage } from "react-icons/bs";
 import Post from "../components/Post";
 import Button from "../components/Button";
 import Error from "../components/Error";
-import previewImage from "../assets/preview.png";
 
 const AddPost = () => {
   const { user } = useAuth();
@@ -16,7 +15,7 @@ const AddPost = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [postError, setPostError] = useState("");
-  const [imagePreview, setImagePreview] = useState(previewImage);
+  const [imagePreview, setImagePreview] = useState("a");
   const [imagePreviewType, setImagePreviewType] = useState("image");
   const [preview] = useState(true);
 
@@ -24,8 +23,6 @@ const AddPost = () => {
     userId: user,
     createdAt: new Date(),
     content: "",
-    likes: [],
-    comments: [],
   });
 
   const onEmojiClick = (event, emojiObject) => {
@@ -40,13 +37,12 @@ const AddPost = () => {
 
   const onPostHandler = (e) => {
     e.preventDefault();
-    if (!image) {
-      setPostError("Image is required");
-      return;
-    }
+
     const body = new FormData();
     body.append("content", content);
-    body.append("postPhoto", image);
+    if (image) {
+      body.append("postPhoto", image);
+    }
 
     //Post to our api
     fetch("http://localhost:8080/api/posts/create", {
