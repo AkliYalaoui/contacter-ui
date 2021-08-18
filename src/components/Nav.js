@@ -1,4 +1,4 @@
-import { FaHome, FaCog, FaBell, FaUserFriends } from "react-icons/fa";
+import { FaHome, FaCog, FaBell, FaUserFriends,FaPlus } from "react-icons/fa";
 import { BsChatFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Li from "./Li";
@@ -12,6 +12,11 @@ const Nav = () => {
         <Li>
           <Link to="/home">
             <FaHome />
+          </Link>
+        </Li>
+        <Li>
+          <Link to="/add-post">
+            <FaPlus />
           </Link>
         </Li>
         <Li>

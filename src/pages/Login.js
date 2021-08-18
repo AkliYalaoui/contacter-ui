@@ -81,6 +81,7 @@ const Login = () => {
             <FormInput
               label={"user name"}
               type={"text"}
+              value={user.userName}
               onValueChanged={(val) => updateForm("userName", val)}
             >
               <FaUser />
@@ -88,6 +89,7 @@ const Login = () => {
             <FormInput
               label={"password"}
               type={"password"}
+              value={user.password}
               onValueChanged={(val) => updateForm("password", val)}
             >
               <FaKey />

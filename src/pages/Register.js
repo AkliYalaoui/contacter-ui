@@ -76,6 +76,7 @@ const Register = () => {
             <FormInput
               label={"user name"}
               type={"text"}
+              value={newUser.userName}
               onValueChanged={(val) => updateForm("userName", val)}
             >
               <FaUser />
@@ -84,6 +85,7 @@ const Register = () => {
               <FormInput
                 label={"First name"}
                 type={"text"}
+                value={newUser.firstName}
                 onValueChanged={(val) => updateForm("firstName", val)}
               >
                 <FaUser />
@@ -91,6 +93,7 @@ const Register = () => {
               <FormInput
                 label={"Last name"}
                 type={"text"}
+                value={newUser.lastName}
                 onValueChanged={(val) => updateForm("lastName", val)}
               >
                 <FaUser />
@@ -99,6 +102,7 @@ const Register = () => {
             <TextArea
               label={"about"}
               placeholder="Brief description about your profile"
+              value={newUser.about}
               onValueChanged={(val) => updateForm("about", val)}
             />
             <FormFile
@@ -108,6 +112,7 @@ const Register = () => {
             <FormInput
               label={"password"}
               type={"password"}
+              value={newUser.password}
               onValueChanged={(val) => updateForm("password", val)}
             >
               <FaKey />

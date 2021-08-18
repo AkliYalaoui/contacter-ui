@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import { MdSend } from "react-icons/md";
 import io from "socket.io-client";
 import { FaVideo } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Chat = () => {
   const { user } = useAuth();
@@ -130,11 +131,13 @@ const Chat = () => {
           <>
             <header className="py-1 sm:py-2 px-4 justify-between flex items-center shadow">
               <div className="space-x-4 flex items-start">
+                <Link to={`/profile/${friend._id}`}>
                 <img
                   alt="profile"
                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                   src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
                 />
+                </Link>
                 <h3 className="font-semibold text-gray-600">
                   {friend?.userName}
                 </h3>

@@ -8,8 +8,8 @@ const FormInput = ({
   type,
   children,
   onValueChanged,
-  onKeyUp
-  
+  onKeyUp,
+  notRequired,
 }) => {
   const [inputType, setInputType] = useState(type);
   return (
@@ -24,10 +24,9 @@ const FormInput = ({
       >
         {children}
       </div>
-      {value ? (
+      {notRequired ? (
         <input
           type={inputType}
-          required
           value={value}
           placeholder={placeholder ? placeholder : ""}
           onKeyUp={onKeyUp}
@@ -37,13 +36,15 @@ const FormInput = ({
       ) : (
         <input
           type={inputType}
-            required
-          value=""
+          required
+          value={value}
           placeholder={placeholder ? placeholder : ""}
+          onKeyUp={onKeyUp}
           onChange={(e) => onValueChanged(e.target.value)}
           className="text-gray-600 border-b border-gray-300 outline-none focus:border-primary py-2 px-6"
         />
       )}
+
       {type === "password" && (
         <span
           onClick={(_) =>

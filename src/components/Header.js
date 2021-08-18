@@ -6,10 +6,36 @@ import { Link } from "react-router-dom";
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { MdEdit } from "react-icons/md";
 import Menu from "./Menu";
+import { useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars";
 
 const Header = () => {
   const { user, updateUser } = useAuth();
-  const search = (needle) => {};
+  const [data, setData] = useState([]);
+
+  const search = (needle) => {
+    if (!needle.trim()) {
+      setData([]);
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/users/${needle.trim()}`, {
+      headers: {
+        "auth-token": user.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setData(data.results);
+        } else {
+          console.log(data.error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const buttonContent = (
     <img
@@ -21,11 +47,11 @@ const Header = () => {
   const menuItems = [
     <>
       <CgProfile />
-      <Link to="/profile">Profile</Link>
+      <Link to={`/profile/${user.id}`}>Profile</Link>
     </>,
     <>
       <MdEdit />
-      <Link to="/">Edit</Link>
+      <Link to="/edit-profile">Edit</Link>
     </>,
     <button
       onClick={(_) => updateUser(null)}
@@ -40,10 +66,10 @@ const Header = () => {
     <header className="flex items-center justify-evenly space-x-4 shadow-lg p-2 sm:px-8">
       <div className="hidden sm:block">
         <Link to="/home">
-          <img src={logo} alt="logo" className="w-36 h-8 object-cover"/>
+          <img src={logo} alt="logo" className="w-36 h-8 object-cover" />
         </Link>
       </div>
-      <form className="w-full max-w-xs min-w-0">
+      <form className="w-full max-w-xs min-w-0 relative">
         <FormInput
           type={"text"}
           placeholder="search"
@@ -51,6 +77,19 @@ const Header = () => {
         >
           <FaSearch />
         </FormInput>
+        {data.length > 0 && (
+          <div className="absolute shadow-lg  top-12 right-0 w-full h-72 bg-white z-30 border border-gray-300 text-gray-600">
+            <Scrollbars>
+              {data.map((res) => (
+                <Link key={res._id} to={`/profile/${res._id}`}>
+                  <div className="p-2 border-b border-gray-200 hover:bg-gray-200">
+                    {res.userName}
+                  </div>
+                </Link>
+              ))}
+            </Scrollbars>
+          </div>
+        )}
       </form>
       <Menu buttonContent={buttonContent} menuItems={menuItems} />
     </header>
