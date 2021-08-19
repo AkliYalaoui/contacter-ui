@@ -9,11 +9,18 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useAuth } from "./context/AuthProvider";
 import Layout from "./components/Layout";
-
+import { useEffect } from "react";
 const App = () => {
   const { user } = useAuth();
+
+  useEffect(() => {
+    const tmp = localStorage.getItem("mode");
+    if (tmp === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  },[]);
   return (
-    <div className="max-w-7xl m-auto">
+    <div className="max-w-7xl m-auto min-h-screen">
       <Router>
         <Switch>
           <Route path="/" exact>

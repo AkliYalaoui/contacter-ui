@@ -17,10 +17,10 @@ const PostField = ({
   return (
     <form onSubmit={(e) => onSubmit(e)} className="flex relative">
       {imagePreview && (
-        <div className="absolute bottom-10 right-0 p-1 bg-white shadow-lg border border-gray-300">
+        <div className="absolute bottom-10 right-0 p-1 bg-white dark:bg-dark900 shadow-lg border border-gray-300 dark:border-gray-600">
           <button
             type="button"
-            className="text-gray-500 p-1 block ml-auto cursor-pointer"
+            className="text-gray-500 hover:text-gray-400 p-1 block ml-auto cursor-pointer"
             onClick={() => {
               setImage(null);
               setImagePreview(null);
@@ -39,7 +39,7 @@ const PostField = ({
           )}
         </div>
       )}
-      <div className="justify-self-center self-center pl-1">
+      <div className="justify-self-center px-2 self-center pl-1">
         <label htmlFor="commentUpload" type="button" className="cursor-pointer">
           <BsCardImage color="green" />
         </label>
@@ -59,7 +59,7 @@ const PostField = ({
           onKeyUp={onKeyUp}
         />
       </div>
-      <button className="cursor-pointer bg-primary text-white px-2 py-1">
+      <button className="cursor-pointer border-l dark:border-gray-600 bg-primary  dark:bg-dark900 dark:text-primary text-white px-2 py-1">
         {children}
       </button>
     </form>

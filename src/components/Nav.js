@@ -1,4 +1,4 @@
-import { FaHome, FaCog, FaBell, FaUserFriends,FaPlus } from "react-icons/fa";
+import { FaHome, FaCog, FaBell, FaUserFriends, FaPlus } from "react-icons/fa";
 import { BsChatFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Li from "./Li";
@@ -7,7 +7,7 @@ import { useRequestCounter } from "../context/RequestCounterProvider";
 const Nav = () => {
   const { counter } = useRequestCounter();
   return (
-    <nav className="fixed border border-gray-300 top-1/2 left-0  transform -translate-y-1/2 shadow-xl bg-white">
+    <nav className="fixed border border-gray-300 dark:border-gray-600 top-1/2 left-0  transform -translate-y-1/2 shadow-xl bg-white dark:bg-dark800">
       <ul>
         <Li>
           <Link to="/home">
@@ -30,7 +30,7 @@ const Nav = () => {
           </Link>
         </Li>
         <Li>
-          <Link to="">
+          <Link to="/notification">
             <FaBell />
           </Link>
         </Li>
@@ -40,7 +40,7 @@ const Nav = () => {
           </Link>
         </Li>
         <Li>
-          <Link to="">
+          <Link to="/settings">
             <FaCog />
           </Link>
         </Li>

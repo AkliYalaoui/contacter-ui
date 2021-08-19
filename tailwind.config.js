@@ -1,6 +1,6 @@
 module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: "class",
   theme: {
     extend: {
       keyframes: {
@@ -22,6 +22,8 @@ module.exports = {
       }),
       backgroundColor: (theme) => ({
         primary: "#00BFA6",
+        dark900: "#27241D",
+        dark800: "#423D33",
       }),
     },
   },

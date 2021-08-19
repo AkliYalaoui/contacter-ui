@@ -6,7 +6,7 @@ import Error from "../components/Error";
 import { useParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
 import { MdSend } from "react-icons/md";
-import io from "socket.io-client";
+import { useSocket } from "../context/SocketProvider";
 import { FaVideo } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import PostField from "../components/PostField";
@@ -22,7 +22,7 @@ const Chat = () => {
   const [messagesError, setMessagesError] = useState();
   const [message, setMessage] = useState("");
   const [typing, setTyping] = useState("");
-  const [socket, setSocket] = useState();
+  const { socket } = useSocket();
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageType, setImageType] = useState("image");
@@ -35,10 +35,6 @@ const Chat = () => {
       setImageType(file.type.split("/")[0]);
     }
   };
-  useEffect(() => {
-    setSocket(io("http://localhost:8080"));
-    return () => socket?.close();
-  }, []);
 
   useEffect(() => {
     socket?.emit("join-conversation", id);

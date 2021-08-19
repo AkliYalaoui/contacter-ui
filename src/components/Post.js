@@ -134,14 +134,14 @@ const Post = ({ post, preview, imagePreviewType }) => {
   }, [post._id]);
 
   return (
-    <article className="shadow-2xl border border-gray-300 mb-6 relative">
-      <header className="p-2 flex space-x-2 items-center border-b border-gray-200">
+    <article className="shadow-2xl border border-gray-300 dark:bg-dark800 dark:border-gray-600 mb-6 relative dark:text-white text-gray-600">
+      <header className="p-2 flex space-x-2 items-center border-b border-gray-200 dark:border-gray-600">
         <img
           alt="profile"
           className="w-8 h-8 rounded-full object-cover"
           src={`http://localhost:8080/api/users/image/${post.userId.profilePhoto}`}
         />
-        <div className="text-gray-600">
+        <div className="">
           <h3 className="font-bold text-sm -mb-2">{post.userId.userName}</h3>
           <span className="text-xs">
             {moment(new Date(post.createdAt)).fromNow()}
@@ -149,10 +149,8 @@ const Post = ({ post, preview, imagePreviewType }) => {
         </div>
       </header>
       <main>
-        <p className="p-2 mb-4 text-gray-700 text-sm sm:text-md">
-          {post.content}
-        </p>
-        <div className="border-b border-gray-300">
+        <p className="p-2 mb-4  text-sm sm:text-md">{post.content}</p>
+        <div className="border-b border-gray-300 dark:border-gray-600">
           {preview ? (
             imagePreviewType === "video" ? (
               <video
@@ -184,15 +182,15 @@ const Post = ({ post, preview, imagePreviewType }) => {
         <div className="p-3 flex items-center justify-evenly">
           {preview && (
             <>
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 ">
                 <span>0 likes</span>
-                <button className="hover:opacity-70">
+                <button className="hover:opacity-70 dark:hover:opacity-70">
                   <AiFillHeart />
                 </button>
               </div>
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 ">
                 <span>0 comments</span>
-                <button className="hover:opacity-70">
+                <button className="hover:opacity-70 dark:hover:opacity-70">
                   <MdModeComment />
                 </button>
               </div>
@@ -200,16 +198,19 @@ const Post = ({ post, preview, imagePreviewType }) => {
           )}
           {!preview && (
             <>
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 ">
                 <span>{likes} likes</span>
-                <button className="hover:opacity-70" onClick={likeUnlike}>
+                <button
+                  className="hover:opacity-70 dark:hover:opacity-70"
+                  onClick={likeUnlike}
+                >
                   {liked ? <AiFillHeart color="red" /> : <AiFillHeart />}
                 </button>
               </div>
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 ">
                 <span>{commentsCount} comments</span>
                 <button
-                  className="hover:opacity-70"
+                  className="hover:opacity-70 dark:hover:opacity-70"
                   onClick={(_) => setOpenComments(true)}
                 >
                   <MdModeComment />
@@ -220,14 +221,14 @@ const Post = ({ post, preview, imagePreviewType }) => {
         </div>
       </main>
       {openComments && (
-        <aside className="absolute top-0 left-0 h-full w-full bg-white flex flex-col justify-between">
+        <aside className="absolute top-0 left-0 h-full w-full bg-white dark:bg-dark800 flex flex-col justify-between">
           <button
-            className="text-gray-500 p-2 block ml-auto cursor-pointer"
+            className=" p-2 block ml-auto cursor-pointer"
             onClick={(_) => setOpenComments(false)}
           >
             <FaTimes />
           </button>
-          <section className="flex-1 border-b border-gray-300">
+          <section className="flex-1 border-b border-gray-300 dark:border-gray-600">
             <Scrollbars>
               {comments.map((comment) => {
                 return <Comment key={comment._id} comment={comment} />;

@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthProvider";
 import { useRequestCounter } from "../context/RequestCounterProvider";
 import Request from "../components/Request";
 import Suggestion from "../components/Suggestion";
-import io from "socket.io-client";
+import { useSocket } from "../context/SocketProvider";
 import { useState, useEffect } from "react";
 import { FaUserAltSlash } from "react-icons/fa";
 import Empty from "../components/Empty";
@@ -22,12 +22,7 @@ const FriendRequest = () => {
   const [deleteRequestMsg, setdeleteRequestMsg] = useState();
   const [acceptRequestError, setacceptRequestError] = useState();
   const [acceptRequestMsg, setacceptRequestMsg] = useState();
-  const [socket, setSocket] = useState();
-
-  useEffect(() => {
-    setSocket(io("http://localhost:8080"));
-    return () => socket?.close();
-  }, []);
+  const { socket } = useSocket();
 
   useEffect(() => {
     socket?.emit("join-requests", user.id);

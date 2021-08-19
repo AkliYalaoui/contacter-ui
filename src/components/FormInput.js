@@ -15,12 +15,14 @@ const FormInput = ({
   return (
     <div className="flex-1 flex flex-col relative px-2">
       {label && (
-        <label className="text-gray-600 capitalize">
+        <label className="text-gray-600 dark:text-white capitalize">
           {label} <span className="text-red-500">*</span>
         </label>
       )}
       <div
-        className={`absolute ${label ? "top-9" : "top-4"} left-2 text-gray-600`}
+        className={`absolute ${
+          label ? "top-9" : "top-4"
+        } left-2 text-gray-600 dark:text-white`}
       >
         {children}
       </div>
@@ -31,7 +33,7 @@ const FormInput = ({
           placeholder={placeholder ? placeholder : ""}
           onKeyUp={onKeyUp}
           onChange={(e) => onValueChanged(e.target.value)}
-          className="text-gray-600 border-b border-gray-300 outline-none focus:border-primary py-2 px-6"
+          className="text-gray-600 dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-6"
         />
       ) : (
         <input
@@ -41,7 +43,7 @@ const FormInput = ({
           placeholder={placeholder ? placeholder : ""}
           onKeyUp={onKeyUp}
           onChange={(e) => onValueChanged(e.target.value)}
-          className="text-gray-600 border-b border-gray-300 outline-none focus:border-primary py-2 px-6"
+          className="text-gray-600 dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-6"
         />
       )}
 
