@@ -12,6 +12,7 @@ import Notification from "../pages/Notification";
 import EditProfile from "../pages/EditProfile";
 import RequestCounterProvider from "../context/RequestCounterProvider";
 import SocketProvider from "../context/SocketProvider";
+import PostPage from "../pages/PostPage";
 
 const Layout = () => {
   return (
@@ -22,6 +23,9 @@ const Layout = () => {
         <main className="pl-12 pr-2 py-2 max-w-2xl m-auto">
           <Route path="/home">
             <Home />
+          </Route>
+          <Route path="/post/:id">
+            <PostPage />
           </Route>
           <Route path="/settings">
             <Settings />

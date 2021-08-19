@@ -25,7 +25,7 @@ const Settings = () => {
 
   return (
     <div className="text-gray-600 dark:text-white my-10">
-      <div className="flex items-center justify-between max-w-sm m-auto  px-4 py-3 rounded bg-gray-200 dark:bg-dark800">
+      <div className="flex items-center my-2 justify-between max-w-sm m-auto  px-4 py-3 rounded bg-gray-200 dark:bg-dark800">
         <span id="mode-label">
           {mode === "dark" ? "Disable dark mode" : "Enable dark mode"}
         </span>
