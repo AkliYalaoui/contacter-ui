@@ -1,12 +1,12 @@
 import moment from "moment";
 import { FaTimes } from "react-icons/fa";
-import { MdModeComment } from "react-icons/md";
-import { BsCardImage } from "react-icons/bs";
 import { AiFillHeart } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
-import FormInput from "../components/FormInput";
+import Comment from "./Comment";
 import { Scrollbars } from "react-custom-scrollbars";
+import PostField from "./PostField";
+import { MdModeComment } from "react-icons/md";
 
 const Post = ({ post, preview, imagePreviewType }) => {
   const { user } = useAuth();
@@ -21,10 +21,12 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [imageType, setImageType] = useState("image");
 
   const fileChanged = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
-    setImageType(file.type.split("/")[0]);
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setImageType(file.type.split("/")[0]);
+    }
   };
 
   const likeUnlike = (_) => {
@@ -228,96 +230,23 @@ const Post = ({ post, preview, imagePreviewType }) => {
           <section className="flex-1 border-b border-gray-300">
             <Scrollbars>
               {comments.map((comment) => {
-                return (
-                  <div
-                    key={comment._id}
-                    className="p-2 flex items-start text-gray-600 text-sm"
-                  >
-                    <img
-                      alt="profile"
-                      className="w-8 h-8 object-cover rounded-full"
-                      src={`http://localhost:8080/api/users/image/${comment.userId?.profilePhoto}`}
-                    />
-                    <div className="ml-2">
-                      <p className="bg-gray-200 mb-2  px-1 shadow rounded-md">
-                        {comment.content}
-                      </p>
-                      {comment.hasImage &&
-                        (comment.image.type === "video" ? (
-                          <video
-                            src={`http://localhost:8080/api/comments/image/${comment.image.url}`}
-                            className="object-cover w-28 h-28 m-auto"
-                            controls
-                          ></video>
-                        ) : (
-                          <img
-                            className="object-cover w-28 h-28 m-auto"
-                            src={`http://localhost:8080/api/comments/image/${comment.image.url}`}
-                          />
-                        ))}
-                      <span className="text-xs  px-1 text-gray-400">
-                        {moment(new Date(comment.createdAt)).fromNow()}
-                      </span>
-                    </div>
-                  </div>
-                );
+                return <Comment key={comment._id} comment={comment} />;
               })}
             </Scrollbars>
           </section>
           <footer>
-            <form onSubmit={postComment} className="flex relative">
-              {imagePreview && (
-                <div className="absolute bottom-10 right-0 p-1 bg-white shadow-lg border border-gray-300">
-                  <button
-                    className="text-gray-500 p-1 block ml-auto cursor-pointer"
-                    onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
-                    }}
-                  >
-                    <FaTimes />
-                  </button>
-                  {imageType === "video" ? (
-                    <video
-                      src={imagePreview}
-                      className="object-cover w-28 h-28 m-auto"
-                      controls
-                    ></video>
-                  ) : (
-                    <img
-                      className="object-cover w-28 h-28 m-auto"
-                      src={imagePreview}
-                    />
-                  )}
-                </div>
-              )}
-              <div className="justify-self-center self-center pl-1">
-                <label
-                  htmlFor="commentUpload"
-                  type="button"
-                  className="cursor-pointer"
-                >
-                  <BsCardImage color="green" />
-                </label>
-                <input
-                  onChange={(e) => fileChanged(e)}
-                  id="commentUpload"
-                  type="file"
-                  className="sr-only"
-                  accept="image/*,video/*"
-                />
-              </div>
-              <div className="-mx-2 flex-1 min-w-0">
-                <FormInput
-                  onValueChanged={(val) => setComment(val)}
-                  placeholder="type your comment here"
-                  value={comment}
-                />
-              </div>
-              <button className="cursor-pointer bg-primary text-white px-2 py-1">
-                <MdModeComment />
-              </button>
-            </form>
+            <PostField
+              onChanged={setComment}
+              val={comment}
+              OnFileChanged={fileChanged}
+              onSubmit={postComment}
+              imagePreview={imagePreview}
+              setImage={setImage}
+              setImagePreview={setImagePreview}
+              imageType={imageType}
+            >
+              <MdModeComment />
+            </PostField>
           </footer>
         </aside>
       )}

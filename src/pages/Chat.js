@@ -5,12 +5,12 @@ import { BsChatDotsFill } from "react-icons/bs";
 import Error from "../components/Error";
 import { useParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
-import FormInput from "../components/FormInput";
-import Button from "../components/Button";
 import { MdSend } from "react-icons/md";
 import io from "socket.io-client";
 import { FaVideo } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import PostField from "../components/PostField";
+import Message from "../components/Message";
 
 const Chat = () => {
   const { user } = useAuth();
@@ -23,7 +23,18 @@ const Chat = () => {
   const [message, setMessage] = useState("");
   const [typing, setTyping] = useState("");
   const [socket, setSocket] = useState();
+  const [image, setImage] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
+  const [imageType, setImageType] = useState("image");
 
+  const fileChanged = (e) => {
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setImageType(file.type.split("/")[0]);
+    }
+  };
   useEffect(() => {
     setSocket(io("http://localhost:8080"));
     return () => socket?.close();
@@ -73,13 +84,19 @@ const Chat = () => {
   const sendMessageHandler = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
+
+    const body = new FormData();
+    body.append("content", message);
+    if (image) {
+      body.append("messagePhoto", image);
+    }
+
     fetch(`http://localhost:8080/api/conversations/${id}`, {
       method: "POST",
       headers: {
-        "content-Type": "application/json",
         "auth-token": user.token,
       },
-      body: JSON.stringify({ msg: message }),
+      body,
     })
       .then((res) => res.json())
       .then((data) => {
@@ -88,6 +105,8 @@ const Chat = () => {
           socket.emit("send-message", id, data.message);
           scrollbars.current.scrollToBottom();
           setMessage("");
+          setImage(null);
+          setImagePreview(null);
         } else setMessagesError(data.error);
       })
       .catch((err) => {
@@ -106,6 +125,7 @@ const Chat = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
+          console.log(data.conversation.messages);
           setMessages(data.conversation.messages);
           setFriend(() => {
             if (data.conversation.member_b._id === user.id)
@@ -132,11 +152,11 @@ const Chat = () => {
             <header className="py-1 sm:py-2 px-4 justify-between flex items-center shadow">
               <div className="space-x-4 flex items-start">
                 <Link to={`/profile/${friend._id}`}>
-                <img
-                  alt="profile"
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
-                  src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
-                />
+                  <img
+                    alt="profile"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                    src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
+                  />
                 </Link>
                 <h3 className="font-semibold text-gray-600">
                   {friend?.userName}
@@ -159,21 +179,12 @@ const Chat = () => {
                     const person =
                       message.sender === friend._id ? friend : user;
                     return (
-                      <div
+                      <Message
                         key={message._id}
-                        className={`flex space-x-2 mb-3 items-center ${
-                          message.sender === user.id ? "flex-row-reverse" : ""
-                        }`}
-                      >
-                        <img
-                          alt="profile"
-                          className="w-8 h-8 rounded-full"
-                          src={`http://localhost:8080/api/users/image/${person.profilePhoto}`}
-                        />
-                        <p className="bg-white shadow py-1 px-2 rounded w-max">
-                          {message.content}
-                        </p>
-                      </div>
+                        message={message}
+                        person={person}
+                        user={user}
+                      />
                     );
                   })}
                   {typing && (
@@ -191,19 +202,19 @@ const Chat = () => {
                 </Scrollbars>
               </section>
               <footer className="shadow">
-                <form onSubmit={sendMessageHandler} className="flex">
-                  <div className="-mx-2 flex-1 min-w-0">
-                    <FormInput
-                      onValueChanged={(val) => userTyping(val)}
-                      onKeyUp={() => userNotTyping()}
-                      placeholder="type your message here"
-                      value={message}
-                    />
-                  </div>
-                  <Button classes={"bg-primary rounded-none"}>
-                    <MdSend />
-                  </Button>
-                </form>
+                <PostField
+                  onChanged={(val) => userTyping(val)}
+                  val={message}
+                  OnFileChanged={fileChanged}
+                  onSubmit={sendMessageHandler}
+                  imagePreview={imagePreview}
+                  setImage={setImage}
+                  setImagePreview={setImagePreview}
+                  imageType={imageType}
+                  onKeyUp={() => userNotTyping()}
+                >
+                  <MdSend />
+                </PostField>
               </footer>
             </main>
           </>

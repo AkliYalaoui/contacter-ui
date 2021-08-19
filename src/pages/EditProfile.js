@@ -21,10 +21,12 @@ const EditProfile = () => {
     setUpdatedUser((prev) => ({ ...prev, [field]: value }));
   };
   const fileChanged = (e) => {
-    const file = e.target.files[0];
-    setUpdatedFile(true);
-    setImagePreview(URL.createObjectURL(file));
-    updateForm("profilePhoto", file);
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      setUpdatedFile(true);
+      setImagePreview(URL.createObjectURL(file));
+      updateForm("profilePhoto", file);
+    }
   };
   const onFormHandler = (e) => {
     e.preventDefault();

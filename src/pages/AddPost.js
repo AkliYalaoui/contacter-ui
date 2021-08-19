@@ -29,10 +29,12 @@ const AddPost = () => {
     setContent((prev) => `${prev}${emojiObject.emoji}`);
   };
   const fileChanged = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
-    setImagePreviewType(file.type.split("/")[0]);
+    if (e.target.files.length !== 0) {
+      const file = e.target.files[0];
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setImagePreviewType(file.type.split("/")[0]);
+    }
   };
 
   const onPostHandler = (e) => {
