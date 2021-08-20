@@ -11,9 +11,14 @@ import Alert from "../components/Alert";
 
 const FriendRequest = () => {
   const { user } = useAuth();
-  const { setCounter } = useRequestCounter();
-  const [friendRequests, setFriendRequests] = useState([]);
-  const [friendSuggestions, setFriendSuggestions] = useState([]);
+  const {
+    setCounter,
+    friendRequests,
+    friendSuggestions,
+    setFriendSuggestions,
+    setFriendRequests,
+  } = useRequestCounter();
+
   const [friendSuggestionsError, setFriendSuggestionsError] = useState();
   const [friendRequestsError, setFriendRequestsError] = useState();
   const [addRequestError, setaddRequestError] = useState();
@@ -26,21 +31,6 @@ const FriendRequest = () => {
 
   useEffect(() => {
     socket?.emit("join-requests", user.id);
-  }, [socket]);
-
-  useEffect(() => {
-    const receiveRequest = (id, r) => {
-      console.log(id, r);
-      setFriendRequests((prev) => [r, ...prev]);
-      setCounter((prev) => prev + 1);
-      setFriendSuggestions((prev) =>
-        prev.filter((friend) => {
-          return friend._id !== id;
-        })
-      );
-    };
-    socket?.on("receive-request", receiveRequest);
-    return () => socket?.removeListener("receive-request", receiveRequest);
   }, [socket]);
 
   const onAddFriendHandler = (id) => {
