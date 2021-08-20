@@ -54,7 +54,7 @@ const Login = () => {
   return (
     <div>
       {loading && (
-        <Alert>
+        <Alert setOpen={setLoading}>
           <b className="capitalize">Loading!</b> Trying to sign you in
         </Alert>
       )}
@@ -77,7 +77,9 @@ const Login = () => {
             <div className="flex justify-center">
               <Logo />
             </div>
-            {loginError && <Error content={loginError} />}
+            {loginError && (
+              <Error content={loginError} setOpen={setLoginError} />
+            )}
             <FormInput
               label={"user name"}
               type={"text"}

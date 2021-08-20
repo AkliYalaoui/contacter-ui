@@ -141,7 +141,9 @@ const Chat = () => {
 
   return (
     <div className="mt-4">
-      {messagesError && <Error content={messagesError} />}
+      {messagesError && (
+        <Error setOpen={messagesError} content={messagesError} />
+      )}
       <section className="bg-gray-100 dark:bg-dark800 shadow text-gray-600 dark:text-white">
         {friend && (
           <>

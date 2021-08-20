@@ -31,7 +31,9 @@ const Conversations = () => {
 
   return (
     <section className="mt-10">
-      {conversationsError && <Error content={conversationsError} />}
+      {conversationsError && (
+        <Error setOpen={conversationsError} content={conversationsError} />
+      )}
       {conversations.length === 0 && (
         <Empty
           icon={<BsChatDotsFill />}

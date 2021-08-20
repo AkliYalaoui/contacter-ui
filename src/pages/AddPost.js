@@ -68,7 +68,7 @@ const AddPost = () => {
   };
   return (
     <div>
-      {postError && <Error content={postError} />}
+      {postError && <Error setOpen={postError} content={postError} />}
       <section className="p-4 shadow-2xl border dark:bg-dark800 text-gray-600 dark:text-white border-gray-300 dark:border-gray-600 mt-6 relative">
         <header className="flex items-center">
           <div className="flex items-center">

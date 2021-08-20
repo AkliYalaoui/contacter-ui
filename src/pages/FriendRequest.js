@@ -173,31 +173,39 @@ const FriendRequest = () => {
   return (
     <div className="mt-10">
       {acceptRequestMsg && (
-        <Alert>
+        <Alert setOpen={acceptRequestMsg}>
           <b className="capitalize">Done !</b>
           {acceptRequestMsg}
         </Alert>
       )}
-      {deleteRequestError && <Error content={deleteRequestError} />}
+      {deleteRequestError && (
+        <Error setOpen={deleteRequestError} content={deleteRequestError} />
+      )}
       {deleteRequestMsg && (
         <Alert>
           <b className="capitalize">Done !</b>
           {deleteRequestMsg}
         </Alert>
       )}
-      {acceptRequestError && <Error content={acceptRequestError} />}
+      {acceptRequestError && (
+        <Error setOpen={acceptRequestError} content={acceptRequestError} />
+      )}
       {addRequestMsg && (
         <Alert>
           <b className="capitalize">Done !</b>
           {addRequestMsg}
         </Alert>
       )}
-      {addRequestError && <Error content={addRequestError} />}
+      {addRequestError && (
+        <Error setOpen={addRequestError} content={addRequestError} />
+      )}
       <section>
         <h2 className="text-gray-600 dark:text-white font-semibold mb-4 p-2 border-b border-gray-200">
           Friend Requests
         </h2>
-        {friendRequestsError && <Error content={friendRequestsError} />}
+        {friendRequestsError && (
+          <Error setOpen={friendRequestsError} content={friendRequestsError} />
+        )}
         {friendRequests.length === 0 && (
           <Empty
             icon={<FaUserAltSlash size="40px" />}
@@ -217,7 +225,12 @@ const FriendRequest = () => {
         <h2 className="text-gray-600 dark:text-white font-semibold mb-4 p-2 border-b border-gray-200">
           Friend Suggestions
         </h2>
-        {friendSuggestionsError && <Error content={friendSuggestionsError} />}
+        {friendSuggestionsError && (
+          <Error
+            setOpen={friendSuggestionsError}
+            content={friendSuggestionsError}
+          />
+        )}
         {friendSuggestions.length === 0 && (
           <Empty
             icon={<FaUserAltSlash size="40px" />}

@@ -33,6 +33,10 @@ const Register = () => {
     const body = new FormData();
     for (let v in newUser) body.append(v, newUser[v]);
 
+    if (newUser.profilePhoto === "") {
+      setRegisterError("profile photo is required");
+      return;
+    }
     setLoading(true);
     //Post to our api
     fetch("http://localhost:8080/api/auth/register", {
@@ -59,7 +63,7 @@ const Register = () => {
   return (
     <div>
       {loading && (
-        <Alert>
+        <Alert setOpen={setLoading}>
           <b className="capitalize">Loading!</b> Trying to sign you in
         </Alert>
       )}
@@ -72,7 +76,9 @@ const Register = () => {
             onSubmit={handleRegister}
             className="shadow-lg p-4 space-y-4 max-w-xl m-auto"
           >
-            {registerError && <Error content={registerError} />}
+            {registerError && (
+              <Error setOpen={setRegisterError} content={registerError} />
+            )}
             <FormInput
               label={"user name"}
               type={"text"}

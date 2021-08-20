@@ -63,9 +63,9 @@ const EditProfile = () => {
   };
   return (
     <div className="mt-10">
-      {error && <Error content={error} />}
+      {error && <Error setOpen={error} content={error} />}
       {alert && (
-        <Alert>
+        <Alert setOpen={alert}>
           <b className="capitalize">Done !</b>
           {alert}
         </Alert>

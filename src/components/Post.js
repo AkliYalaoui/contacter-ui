@@ -22,6 +22,31 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [imageType, setImageType] = useState("image");
   const { socket } = useSocket();
 
+  useEffect(() => {
+    socket?.emit("join-post", `post-${post._id}`);
+  }, [socket]);
+
+  useEffect(() => {
+    const receiveComment = (id, c) => {
+      setComments((prev) => [c, ...prev]);
+      setCommentsCount((prev) => prev + 1);
+    };
+    socket?.on("receive-comment", receiveComment);
+    return () => socket?.removeListener("receive-comment", receiveComment);
+  }, [socket]);
+
+  useEffect(() => {
+    const receiveLike = (id, c) => {
+      if (c) {
+        setLikes((l) => l + 1);
+      } else {
+        setLikes((l) => l - 1);
+      }
+    };
+    socket?.on("receive-like", receiveLike);
+    return () => socket?.removeListener("receive-like", receiveLike);
+  }, [socket]);
+
   const fileChanged = (e) => {
     if (e.target.files.length !== 0) {
       const file = e.target.files[0];
@@ -68,6 +93,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
         } else {
           console.log(data.error);
         }
+        socket.emit("send-like", `post-${post._id}`, data.liked);
       })
       .catch((err) => {
         console.log(err);
@@ -119,6 +145,11 @@ const Post = ({ post, preview, imagePreviewType }) => {
           setImagePreview(null);
           setCommentsCount((prev) => prev + 1);
           setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
+          socket.emit("send-comment", `post-${post._id}`, {
+            ...data.comment,
+            userId: user,
+          });
+
           socket.emit(
             "join-notifications",
             `notifications-${data.notification.to}`
