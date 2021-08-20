@@ -29,10 +29,6 @@ const FriendRequest = () => {
   const [acceptRequestMsg, setacceptRequestMsg] = useState();
   const { socket } = useSocket();
 
-  useEffect(() => {
-    socket?.emit("join-requests", user.id);
-  }, [socket]);
-
   const onAddFriendHandler = (id) => {
     fetch("http://localhost:8080/api/friends/requests/create", {
       method: "POST",
@@ -51,8 +47,8 @@ const FriendRequest = () => {
             })
           );
           setdeleteRequestMsg(data.msg);
-          socket.emit("join-requests", id);
-          socket.emit("send-request", id, data.request);
+          socket.emit("join-requests", `requests-${id}`);
+          socket.emit("send-request", `requests-${id}`, data.request);
         } else {
           setdeleteRequestError(data.error);
         }
@@ -109,6 +105,18 @@ const FriendRequest = () => {
           );
           setCounter((prev) => prev - 1);
           setacceptRequestMsg(data.msg);
+          socket.emit(
+            "join-notifications",
+            `notifications-${data.notification.to}`
+          );
+          socket.emit(
+            "send-notification",
+            `notifications-${data.notification.to}`,
+            {
+              ...data.notification,
+              from: data.from,
+            }
+          );
         } else {
           setacceptRequestError(data.error);
         }
@@ -186,7 +194,7 @@ const FriendRequest = () => {
       )}
       {addRequestError && <Error content={addRequestError} />}
       <section>
-        <h2 className="text-gray-600 font-semibold mb-4 p-2 border-b border-gray-200">
+        <h2 className="text-gray-600 dark:text-white font-semibold mb-4 p-2 border-b border-gray-200">
           Friend Requests
         </h2>
         {friendRequestsError && <Error content={friendRequestsError} />}
@@ -206,7 +214,7 @@ const FriendRequest = () => {
         ))}
       </section>
       <section className="mt-8">
-        <h2 className="text-gray-600 font-semibold mb-4 p-2 border-b border-gray-200">
+        <h2 className="text-gray-600 dark:text-white font-semibold mb-4 p-2 border-b border-gray-200">
           Friend Suggestions
         </h2>
         {friendSuggestionsError && <Error content={friendSuggestionsError} />}

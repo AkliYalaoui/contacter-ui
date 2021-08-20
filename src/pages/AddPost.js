@@ -69,7 +69,7 @@ const AddPost = () => {
   return (
     <div>
       {postError && <Error content={postError} />}
-      <section className="p-4 shadow-2xl border border-gray-300 mt-6 relative">
+      <section className="p-4 shadow-2xl border dark:bg-dark800 text-gray-600 dark:text-white border-gray-300 dark:border-gray-600 mt-6 relative">
         <header className="flex items-center">
           <div className="flex items-center">
             <img
@@ -77,13 +77,13 @@ const AddPost = () => {
               className="w-10 h-10 rounded-full mr-4"
               src={`http://localhost:8080/api/users/image/${user.profilePhoto}`}
             />
-            <div className="text-gray-600">
+            <div className="">
               <span className="font-semibold">{user.userName}</span>
               <MdPublic />
             </div>
           </div>
         </header>
-        <form onSubmit={onPostHandler}>
+        <form onSubmit={onPostHandler} className="mt-2">
           <TextArea
             placeholder={`What's on your mind, ${user.userName}?`}
             value={content}
@@ -98,7 +98,7 @@ const AddPost = () => {
               });
             }}
           />
-          <footer className="flex justify-evenly items-center text-gray-500 pt-2">
+          <footer className="flex justify-evenly items-center  pt-2">
             <div>
               <label
                 htmlFor="imageUpload"
@@ -139,7 +139,7 @@ const AddPost = () => {
         </form>
       </section>
       <section className="mt-10">
-        <h2 className="pb-2 mb-4 border-b border-gray-700 text-gray-700 font-semibold">
+        <h2 className="pb-2 mb-4 border-b border-gray-600 text-gray-700 dark:text-white font-semibold">
           # Preview
         </h2>
         {preview && (

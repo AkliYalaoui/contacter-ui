@@ -2,30 +2,10 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { useNotification } from "../context/NotificationProvider";
 
 const Notification = () => {
-  const [notifications, setNotifications] = useState([]);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    fetch("http://localhost:8080/api/notifications", {
-      headers: {
-        "auth-token": user.token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.success) {
-          setNotifications(data.notifications);
-        } else {
-          console.log(data.error);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  const { notifications, setNotifications } = useNotification();
 
   return (
     <div className="my-10">

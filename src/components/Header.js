@@ -55,7 +55,7 @@ const Header = () => {
     </>,
     <button
       onClick={(_) => updateUser(null)}
-      className="flex items-center space-x-2 text-gray-600 hover:text-primary transition hover:border-primary"
+      className="flex items-center space-x-2 text-gray-600 dark:text-white hover:text-primary transition hover:border-primary dark:hover:border-primary dark:hover:text-primary"
     >
       <CgLogOut />
       <span>Logout</span>
@@ -78,11 +78,11 @@ const Header = () => {
           <FaSearch />
         </FormInput>
         {data.length > 0 && (
-          <div className="absolute shadow-lg  top-12 right-0 w-full h-72 bg-white z-30 border border-gray-300 text-gray-600">
+          <div className="absolute shadow-lg  top-12 right-0 w-full h-72 bg-white dark:bg-dark800 z-30 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-white">
             <Scrollbars>
               {data.map((res) => (
                 <Link key={res._id} to={`/profile/${res._id}`}>
-                  <div className="p-2 border-b border-gray-200 hover:bg-gray-200">
+                  <div className="p-2 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-dark900">
                     {res.userName}
                   </div>
                 </Link>

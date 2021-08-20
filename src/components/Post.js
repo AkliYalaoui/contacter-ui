@@ -7,6 +7,7 @@ import Comment from "./Comment";
 import { Scrollbars } from "react-custom-scrollbars";
 import PostField from "./PostField";
 import { MdModeComment } from "react-icons/md";
+import { useSocket } from "../context/SocketProvider";
 
 const Post = ({ post, preview, imagePreviewType }) => {
   const { user } = useAuth();
@@ -19,6 +20,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageType, setImageType] = useState("image");
+  const { socket } = useSocket();
 
   const fileChanged = (e) => {
     if (e.target.files.length !== 0) {
@@ -49,6 +51,20 @@ const Post = ({ post, preview, imagePreviewType }) => {
       .then((data) => {
         if (data.success) {
           console.log(data);
+          if (data.liked) {
+            socket.emit(
+              "join-notifications",
+              `notifications-${data.notification.to}`
+            );
+            socket.emit(
+              "send-notification",
+              `notifications-${data.notification.to}`,
+              {
+                ...data.notification,
+                from: data.from,
+              }
+            );
+          }
         } else {
           console.log(data.error);
         }
@@ -103,6 +119,18 @@ const Post = ({ post, preview, imagePreviewType }) => {
           setImagePreview(null);
           setCommentsCount((prev) => prev + 1);
           setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
+          socket.emit(
+            "join-notifications",
+            `notifications-${data.notification.to}`
+          );
+          socket.emit(
+            "send-notification",
+            `notifications-${data.notification.to}`,
+            {
+              ...data.notification,
+              from: data.from,
+            }
+          );
         } else {
           console.log(data.error);
         }

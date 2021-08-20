@@ -18,7 +18,7 @@ const Message = ({ message, user, person }) => {
         }`}
       >
         <p
-          className={`bg-white shadow py-1 px-2 rounded w-max ${
+          className={`bg-white dark:bg-dark900 shadow py-1 px-2 rounded w-max ${
             message.sender === user.id ? "mr-2" : "ml-2"
           }`}
         >

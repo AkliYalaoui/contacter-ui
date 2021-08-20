@@ -63,7 +63,7 @@ const Login = () => {
       </header>
       <main className="flex items-center flex-row mt-6">
         <section className="flex-1 p-4 hidden lg:block">
-          <p className="p-4 text-3xl font-medium text-gray-700 leading-10 capitalize">
+          <p className="p-4 text-3xl font-medium text-gray-700 dark:text-white leading-10 capitalize">
             # 1 Modern social media app immitating the real world
           </p>
           <img className="mt-8" src={svg} alt="login page" />

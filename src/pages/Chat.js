@@ -142,7 +142,7 @@ const Chat = () => {
   return (
     <div className="mt-4">
       {messagesError && <Error content={messagesError} />}
-      <section className="bg-gray-100 shadow">
+      <section className="bg-gray-100 dark:bg-dark800 shadow text-gray-600 dark:text-white">
         {friend && (
           <>
             <header className="py-1 sm:py-2 px-4 justify-between flex items-center shadow">
@@ -154,11 +154,9 @@ const Chat = () => {
                     src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
                   />
                 </Link>
-                <h3 className="font-semibold text-gray-600">
-                  {friend?.userName}
-                </h3>
+                <h3 className="font-semibold ">{friend?.userName}</h3>
               </div>
-              <button className="cursor-pointer text-primary hover:bg-gray-300 p-2 rounded-full">
+              <button className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full">
                 <FaVideo size="20px" />
               </button>
             </header>

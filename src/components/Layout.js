@@ -13,11 +13,13 @@ import EditProfile from "../pages/EditProfile";
 import RequestCounterProvider from "../context/RequestCounterProvider";
 import SocketProvider from "../context/SocketProvider";
 import PostPage from "../pages/PostPage";
+import NotificationProvider from "../context/NotificationProvider";
 
 const Layout = () => {
   return (
     <SocketProvider>
       <RequestCounterProvider>
+        <NotificationProvider>
         <Header />
         <Nav />
         <main className="pl-12 pr-2 py-2 max-w-2xl m-auto">
@@ -52,6 +54,7 @@ const Layout = () => {
             <Chat />
           </Route>
         </main>
+        </NotificationProvider>
       </RequestCounterProvider>
     </SocketProvider>
   );

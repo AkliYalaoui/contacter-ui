@@ -21,6 +21,10 @@ const RequestCounterProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    socket?.emit("join-requests", `requests-${user.id}`);
+  }, [socket]);
+
+  useEffect(() => {
     fetch("http://localhost:8080/api/friends/count", {
       headers: {
         "auth-token": user.token,
