@@ -10,6 +10,8 @@ import { useAuth } from "../context/AuthProvider";
 import Error from "../components/Error";
 import Alert from "../components/Alert";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Register = () => {
   const [newUser, setNewUser] = useState({
     userName: "",
@@ -39,7 +41,7 @@ const Register = () => {
     }
     setLoading(true);
     //Post to our api
-    fetch("http://localhost:8080/api/auth/register", {
+    fetch(`${BASE_URL}/api/auth/register`, {
       method: "POST",
       body,
     })

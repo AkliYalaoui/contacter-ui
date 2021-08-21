@@ -1,12 +1,17 @@
 import moment from "moment";
 import { Link } from "react-router-dom";
+import Empty from "../components/Empty";
 import { useNotification } from "../context/NotificationProvider";
+import { ImSad } from "react-icons/im";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Notification = () => {
   const { notifications, setNotifications } = useNotification();
 
   return (
     <div className="my-10">
+      {notifications.length === 0 && <Empty icon={<ImSad/>} content="No notification to display " />}
       {notifications.map((notification) => (
         <div
           key={notification._id}
@@ -19,7 +24,7 @@ const Notification = () => {
             <img
               alt="profile"
               className="w-8 h-8 rounded-full object-cover mr-2"
-              src={`http://localhost:8080/api/users/image/${notification.from.profilePhoto}`}
+              src={`${BASE_URL}/api/users/image/${notification.from.profilePhoto}`}
             />
             <div>
               <h3 className="font-bold">{notification.from.userName}</h3>

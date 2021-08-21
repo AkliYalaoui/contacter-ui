@@ -1,0 +1,42 @@
+.dot_Typing {
+  --my-color: #00BFA6;
+  position: relative;
+  left: -9999px;
+  width: 6px;
+  height: 6px;
+  border-radius: 5px;
+  background-color: var(--my-color);
+  color: var(--my-color);
+  box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  animation: dotTyping 1.5s infinite linear;
+}
+
+@keyframes dotTyping {
+  0% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+
+  16.667% {
+    box-shadow: 9984px -10px 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+
+  33.333% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+
+  50% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px -10px 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+
+  66.667% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+
+  83.333% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px -10px 0 0 var(--my-color);
+  }
+
+  100% {
+    box-shadow: 9984px 0 0 0 var(--my-color), 9999px 0 0 0 var(--my-color), 10014px 0 0 0 var(--my-color);
+  }
+}

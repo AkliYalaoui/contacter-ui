@@ -8,6 +8,10 @@ import { BsCardImage } from "react-icons/bs";
 import Post from "../components/Post";
 import Button from "../components/Button";
 import Error from "../components/Error";
+import Alert from "../components/Alert";
+import Loading from "../components/Loading";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const AddPost = () => {
   const { user } = useAuth();
@@ -15,6 +19,8 @@ const AddPost = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [postError, setPostError] = useState("");
+  const [postMsg, setPostMsg] = useState("");
+  const [postLaoding, setPostLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState("a");
   const [imagePreviewType, setImagePreviewType] = useState("image");
   const [preview] = useState(true);
@@ -46,8 +52,9 @@ const AddPost = () => {
       body.append("postPhoto", image);
     }
 
+    setPostLoading(true);
     //Post to our api
-    fetch("http://localhost:8080/api/posts/create", {
+    fetch(`${BASE_URL}/api/posts/create`, {
       method: "POST",
       headers: {
         "auth-token": user.token,
@@ -56,26 +63,35 @@ const AddPost = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        setPostLoading(false);
         if (data.success) {
-          console.log("data");
+          console.log(data);
+          setPostMsg("Post created successfully");
         } else {
-          console.log(data.erro);
+          setPostError(data.error);
         }
       })
       .catch((err) => {
         console.error(err);
+        setPostError("something went wrong, please try again");
       });
   };
   return (
     <div>
-      {postError && <Error setOpen={postError} content={postError} />}
+      {postMsg && (
+        <Alert setOpen={setPostMsg}>
+          <b className="capitalize">Done!</b> {postMsg}
+        </Alert>
+      )}
+      {postLaoding && <Loading />}
+      {postError && <Error setOpen={setPostError} content={postError} />}
       <section className="p-4 shadow-2xl border dark:bg-dark800 text-gray-600 dark:text-white border-gray-300 dark:border-gray-600 mt-6 relative">
         <header className="flex items-center">
           <div className="flex items-center">
             <img
               alt="profile"
               className="w-10 h-10 rounded-full mr-4"
-              src={`http://localhost:8080/api/users/image/${user.profilePhoto}`}
+              src={`${BASE_URL}/api/users/image/${user.profilePhoto}`}
             />
             <div className="">
               <span className="font-semibold">{user.userName}</span>

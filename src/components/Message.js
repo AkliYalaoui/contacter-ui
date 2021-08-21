@@ -1,6 +1,27 @@
-import React from "react";
+import { useState, useEffect } from "react";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Message = ({ message, user, person }) => {
+  const [image, setImage] = useState("");
+
+  useEffect(() => {
+    if (!message.image || !message?.image?.url) return;
+    
+    fetch(`${BASE_URL}/api/conversations/image/${message.image.url}`, {
+      headers: {
+        "auth-token": user.token,
+      },
+    })
+      .then((res) => res.blob())
+      .then((data) => {
+        setImage(URL.createObjectURL(data));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [message.image]);
+
   return (
     <div
       className={`flex my-4 items-start ${
@@ -10,7 +31,7 @@ const Message = ({ message, user, person }) => {
       <img
         alt="profile"
         className="w-8 h-8 rounded-full"
-        src={`http://localhost:8080/api/users/image/${person.profilePhoto}`}
+        src={`${BASE_URL}/api/users/image/${person.profilePhoto}`}
       />
       <div
         className={`flex flex-col ${
@@ -28,15 +49,12 @@ const Message = ({ message, user, person }) => {
           {message.hasImage === true &&
             (message.image.type === "video" ? (
               <video
-                src={`http://localhost:8080/api/conversations/image/${message.image.url}`}
+                src={`${image}`}
                 className="object-cover w-28 h-28"
                 controls
               ></video>
             ) : (
-              <img
-                className="object-cover w-28 h-28"
-                src={`http://localhost:8080/api/conversations/image/${message.image.url}`}
-              />
+              <img className="object-cover w-28 h-28" src={`${image}`} />
             ))}
         </div>
       </div>

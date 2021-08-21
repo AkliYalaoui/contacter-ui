@@ -1,3 +1,5 @@
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Suggestion = ({ person, onAddFriend }) => {
   return (
     <div className="bg-gray-200 dark:bg-dark800 text-gray-600 dark:text-white rounded py-2 px-4 shadow-lg max-w-xs m-auto mb-4">
@@ -8,7 +10,7 @@ const Suggestion = ({ person, onAddFriend }) => {
         <img
           alt="profile"
           className="w-12 cursor-pointer h-12 rounded-full"
-          src={`http://localhost:8080/api/users/image/${person.profilePhoto}`}
+          src={`${BASE_URL}/api/users/image/${person.profilePhoto}`}
         />
         <div className="flex-1">
           <h3 className=" mb-1 font-bold">{person.userName}</h3>

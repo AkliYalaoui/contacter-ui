@@ -11,6 +11,10 @@ import { FaVideo } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import PostField from "../components/PostField";
 import Message from "../components/Message";
+import Typing from "../components/Typing";
+import Loading from "../components/Loading";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Chat = () => {
   const { user } = useAuth();
@@ -21,6 +25,7 @@ const Chat = () => {
   const [friend, setFriend] = useState();
   const [messagesError, setMessagesError] = useState();
   const [message, setMessage] = useState("");
+  const [messageLoading, setMessageLoading] = useState(false);
   const [typing, setTyping] = useState("");
   const { socket } = useSocket();
   const [image, setImage] = useState("");
@@ -51,6 +56,7 @@ const Chat = () => {
   useEffect(() => {
     const typing = (m) => {
       setTyping(m);
+      scrollbars.current.scrollToBottom();
     };
     socket?.on("typing", typing);
     return () => socket?.removeListener("typing", typing);
@@ -75,7 +81,7 @@ const Chat = () => {
   const userNotTyping = (_) => {
     setTimeout(() => {
       socket.emit("user-not-typing", id);
-    }, 500);
+    }, 1000);
   };
   const sendMessageHandler = (e) => {
     e.preventDefault();
@@ -87,7 +93,7 @@ const Chat = () => {
       body.append("messagePhoto", image);
     }
 
-    fetch(`http://localhost:8080/api/conversations/${id}`, {
+    fetch(`${BASE_URL}/api/conversations/${id}`, {
       method: "POST",
       headers: {
         "auth-token": user.token,
@@ -113,13 +119,15 @@ const Chat = () => {
       });
   };
   useEffect(() => {
-    fetch(`http://localhost:8080/api/conversations/${id}`, {
+    setMessageLoading(true);
+    fetch(`${BASE_URL}/api/conversations/${id}`, {
       headers: {
         "auth-token": user.token,
       },
     })
       .then((res) => res.json())
       .then((data) => {
+        setMessageLoading(false);
         if (data.success) {
           console.log(data.conversation.messages);
           setMessages(data.conversation.messages);
@@ -138,14 +146,16 @@ const Chat = () => {
         );
       });
   }, [user.token, user.id, id]);
-
+  if (messageLoading) {
+    return <Loading />;
+  }
   return (
     <div className="mt-4">
       {messagesError && (
         <Error setOpen={messagesError} content={messagesError} />
       )}
       <section className="bg-gray-100 dark:bg-dark800 shadow text-gray-600 dark:text-white">
-        {friend && (
+        {friend && !messagesError && (
           <>
             <header className="py-1 sm:py-2 px-4 justify-between flex items-center shadow">
               <div className="space-x-4 flex items-start">
@@ -153,7 +163,7 @@ const Chat = () => {
                   <img
                     alt="profile"
                     className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
-                    src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
+                    src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
                   />
                 </Link>
                 <h3 className="font-semibold ">{friend?.userName}</h3>
@@ -188,11 +198,11 @@ const Chat = () => {
                       <img
                         alt="profile"
                         className="w-8 h-8 rounded-full"
-                        src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
+                        src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
                       />
-                      <p className="bg-white shadow py-1 px-2 rounded w-max animate-pulse">
-                        {typing}
-                      </p>
+                      <div className="bg-white dark:bg-dark900  w-12 shadow-lg py-2 pl-5 pr-1 rounded">
+                        <Typing />
+                      </div>
                     </div>
                   )}
                 </Scrollbars>

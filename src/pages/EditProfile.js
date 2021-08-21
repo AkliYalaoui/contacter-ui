@@ -7,6 +7,8 @@ import { FiPlusCircle } from "react-icons/fi";
 import Alert from "../components/Alert";
 import Error from "../components/Error";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const EditProfile = () => {
   const { user, updateUser } = useAuth();
   const [updatedUser, setUpdatedUser] = useState({ ...user, password: "" });
@@ -14,7 +16,7 @@ const EditProfile = () => {
   const [error, setError] = useState();
   const [alert, setAlert] = useState();
   const [imagePreview, setImagePreview] = useState(
-    `http://localhost:8080/api/users/image/${user.profilePhoto}`
+    `${BASE_URL}/api/users/image/${user.profilePhoto}`
   );
 
   const updateForm = (field, value) => {
@@ -40,7 +42,7 @@ const EditProfile = () => {
       body.append(v, updatedUser[v]);
     }
 
-    fetch("http://localhost:8080/api/users/update", {
+    fetch(`${BASE_URL}/api/users/update`, {
       method: "PUT",
       headers: {
         "auth-token": user.token,

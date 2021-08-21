@@ -3,6 +3,8 @@ import { useAuth } from "../context/AuthProvider";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Conversation = ({ conversation }) => {
   const { user } = useAuth();
   const [friend] = useState(() => {
@@ -15,7 +17,7 @@ const Conversation = ({ conversation }) => {
         <img
           alt="profile"
           className="w-14 h-14 rounded-full"
-          src={`http://localhost:8080/api/users/image/${friend.profilePhoto}`}
+          src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
         />
         <div>
           <h3 className="font-bold ">{friend.userName}</h3>

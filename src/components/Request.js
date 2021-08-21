@@ -1,4 +1,5 @@
 import moment from "moment";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Request = ({ person, onConfirmRequest, onDeleteRequest }) => {
   return (
@@ -10,7 +11,7 @@ const Request = ({ person, onConfirmRequest, onDeleteRequest }) => {
         <img
           alt="profile"
           className="w-14 cursor-pointer h-14 rounded-full"
-          src={`http://localhost:8080/api/users/image/${person.requester.profilePhoto}`}
+          src={`${BASE_URL}/api/users/image/${person.requester.profilePhoto}`}
         />
         <div className="flex-1">
           <h3 className="font-bold">{person.requester.userName}</h3>

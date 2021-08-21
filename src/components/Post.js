@@ -8,6 +8,9 @@ import { Scrollbars } from "react-custom-scrollbars";
 import PostField from "./PostField";
 import { MdModeComment } from "react-icons/md";
 import { useSocket } from "../context/SocketProvider";
+import Alert from "./Alert";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Post = ({ post, preview, imagePreviewType }) => {
   const { user } = useAuth();
@@ -16,6 +19,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [liked, setLiked] = useState(false);
   const [openComments, setOpenComments] = useState(false);
   const [comment, setComment] = useState("");
+  const [alert, setAlert] = useState();
   const [comments, setComments] = useState([]);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState("");
@@ -66,7 +70,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
       return !prev;
     });
 
-    fetch(`http://localhost:8080/api/likes/post/${post._id}`, {
+    fetch(`${BASE_URL}/api/likes/post/${post._id}`, {
       method: "POST",
       headers: {
         "auth-token": user.token,
@@ -103,7 +107,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
   useEffect(() => {
     if (!post._id) return;
 
-    fetch(`http://localhost:8080/api/likes/post/${post._id}`, {
+    fetch(`${BASE_URL}/api/likes/post/${post._id}`, {
       headers: {
         "auth-token": user.token,
       },
@@ -130,7 +134,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
     if (image) {
       body.append("commentPhoto", image);
     }
-    fetch(`http://localhost:8080/api/comments/post/${post._id}`, {
+    fetch(`${BASE_URL}/api/comments/post/${post._id}`, {
       method: "POST",
       headers: {
         "auth-token": user.token,
@@ -164,16 +168,18 @@ const Post = ({ post, preview, imagePreviewType }) => {
           );
         } else {
           console.log(data.error);
+          setAlert(data.error);
         }
       })
       .catch((err) => {
         console.log(err);
+        setAlert("something went wrong,please try again");
       });
   };
   useEffect(() => {
     if (!post._id) return;
 
-    fetch(`http://localhost:8080/api/comments/post/${post._id}`, {
+    fetch(`${BASE_URL}/api/comments/post/${post._id}`, {
       headers: {
         "auth-token": user.token,
       },
@@ -194,11 +200,16 @@ const Post = ({ post, preview, imagePreviewType }) => {
 
   return (
     <article className="shadow-2xl border border-gray-300 dark:bg-dark800 dark:border-gray-600 mb-6 relative dark:text-white text-gray-600">
+      {alert && (
+        <Alert setOpen={setAlert}>
+          <b className="capitalize">Error!</b> {alert}
+        </Alert>
+      )}
       <header className="p-2 flex space-x-2 items-center border-b border-gray-200 dark:border-gray-600">
         <img
           alt="profile"
           className="w-8 h-8 rounded-full object-cover"
-          src={`http://localhost:8080/api/users/image/${post.userId.profilePhoto}`}
+          src={`${BASE_URL}/api/users/image/${post.userId.profilePhoto}`}
         />
         <div className="">
           <h3 className="font-bold text-sm -mb-2">{post.userId.userName}</h3>
@@ -226,14 +237,14 @@ const Post = ({ post, preview, imagePreviewType }) => {
           ) : post.hasImage !== false ? (
             post.image.type === "video" ? (
               <video
-                src={`http://localhost:8080/api/posts/image/${post.image.url}`}
+                src={`${BASE_URL}/api/posts/image/${post.image.url}`}
                 className="object-cover max-h-96 m-auto block w-full"
                 controls
               ></video>
             ) : (
               <img
                 className="object-cover max-h-96 m-auto block w-full"
-                src={`http://localhost:8080/api/posts/image/${post.image.url}`}
+                src={`${BASE_URL}/api/posts/image/${post.image.url}`}
               />
             )
           ) : null}

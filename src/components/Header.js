@@ -9,6 +9,8 @@ import Menu from "./Menu";
 import { useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Header = () => {
   const { user, updateUser } = useAuth();
   const [data, setData] = useState([]);
@@ -19,7 +21,7 @@ const Header = () => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/users/${needle.trim()}`, {
+    fetch(`${BASE_URL}/api/users/${needle.trim()}`, {
       headers: {
         "auth-token": user.token,
       },
@@ -41,7 +43,7 @@ const Header = () => {
     <img
       alt="profile"
       className="w-10 cursor-pointer h-10 rounded-full"
-      src={`http://localhost:8080/api/users/image/${user.profilePhoto}`}
+      src={`${BASE_URL}/api/users/image/${user.profilePhoto}`}
     />
   );
   const menuItems = [

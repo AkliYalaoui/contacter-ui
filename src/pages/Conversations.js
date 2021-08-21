@@ -4,20 +4,26 @@ import Conversation from "../components/Conversation";
 import Empty from "../components/Empty";
 import { BsChatDotsFill } from "react-icons/bs";
 import Error from "../components/Error";
+import Loading from "../components/Loading";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Conversations = () => {
   const { user } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [conversationsError, setConversationsError] = useState();
-
+  const [conversationsLoading, setConversationsLoading] = useState(false);
+  
   useEffect(() => {
-    fetch("http://localhost:8080/api/conversations", {
+    setConversationsLoading(true);
+    fetch(`${BASE_URL}/api/conversations`, {
       headers: {
         "auth-token": user.token,
       },
     })
       .then((res) => res.json())
       .then((data) => {
+        setConversationsLoading(false);
         if (data.success) setConversations(data.conversations);
         else setConversationsError(data.error);
       })
@@ -28,6 +34,9 @@ const Conversations = () => {
         );
       });
   }, [user.token]);
+  if (conversationsLoading) {
+    return <Loading />;
+  }
 
   return (
     <section className="mt-10">

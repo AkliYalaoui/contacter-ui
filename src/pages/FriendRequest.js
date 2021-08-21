@@ -8,6 +8,9 @@ import { FaUserAltSlash } from "react-icons/fa";
 import Empty from "../components/Empty";
 import Error from "../components/Error";
 import Alert from "../components/Alert";
+import Loading from "../components/Loading";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const FriendRequest = () => {
   const { user } = useAuth();
@@ -18,7 +21,8 @@ const FriendRequest = () => {
     setFriendSuggestions,
     setFriendRequests,
   } = useRequestCounter();
-
+  const [friendSuggestionLoading, setfriendSuggestionLoading] = useState(false);
+  const [friendRequestsLoading, setfriendRequestsLoading] = useState(false);
   const [friendSuggestionsError, setFriendSuggestionsError] = useState();
   const [friendRequestsError, setFriendRequestsError] = useState();
   const [addRequestError, setaddRequestError] = useState();
@@ -30,7 +34,7 @@ const FriendRequest = () => {
   const { socket } = useSocket();
 
   const onAddFriendHandler = (id) => {
-    fetch("http://localhost:8080/api/friends/requests/create", {
+    fetch(`${BASE_URL}/api/friends/requests/create`, {
       method: "POST",
       headers: {
         "content-Type": "application/json",
@@ -61,7 +65,7 @@ const FriendRequest = () => {
       });
   };
   const onDeleteRequestHandle = (id) => {
-    fetch("http://localhost:8080/api/friends/requests", {
+    fetch(`${BASE_URL}/api/friends/requests`, {
       method: "DELETE",
       headers: {
         "content-Type": "application/json",
@@ -89,7 +93,7 @@ const FriendRequest = () => {
       });
   };
   const onConfirmRequestHandler = (id) => {
-    fetch("http://localhost:8080/api/friends/requests/accept", {
+    fetch(`${BASE_URL}/api/friends/requests/accept`, {
       method: "PUT",
       headers: {
         "content-Type": "application/json",
@@ -130,13 +134,15 @@ const FriendRequest = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/friends/suggestions", {
+    setfriendSuggestionLoading(true);
+    fetch(`${BASE_URL}/api/friends/suggestions`, {
       headers: {
         "auth-token": user.token,
       },
     })
       .then((res) => res.json())
       .then((data) => {
+        setfriendSuggestionLoading(false);
         if (data.success) {
           setFriendSuggestions(data.suggestions);
         } else {
@@ -150,13 +156,15 @@ const FriendRequest = () => {
   }, [user.token]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/friends/requests", {
+    setfriendRequestsLoading(true);
+    fetch(`${BASE_URL}/api/friends/requests`, {
       headers: {
         "auth-token": user.token,
       },
     })
       .then((res) => res.json())
       .then((data) => {
+        setfriendRequestsLoading(false);
         if (data.success) {
           setFriendRequests(data.requests);
           setCounter(data.requests.length);
@@ -206,6 +214,7 @@ const FriendRequest = () => {
         {friendRequestsError && (
           <Error setOpen={friendRequestsError} content={friendRequestsError} />
         )}
+        {friendRequestsLoading ? <Loading /> : ""}
         {friendRequests.length === 0 && (
           <Empty
             icon={<FaUserAltSlash size="40px" />}
@@ -231,6 +240,8 @@ const FriendRequest = () => {
             content={friendSuggestionsError}
           />
         )}
+
+        {friendSuggestionLoading ? <Loading /> : ""}
         {friendSuggestions.length === 0 && (
           <Empty
             icon={<FaUserAltSlash size="40px" />}
