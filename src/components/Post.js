@@ -9,6 +9,7 @@ import PostField from "./PostField";
 import { MdModeComment } from "react-icons/md";
 import { useSocket } from "../context/SocketProvider";
 import Alert from "./Alert";
+import Empty from "./Empty";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -127,13 +128,19 @@ const Post = ({ post, preview, imagePreviewType }) => {
   }, [post._id]);
 
   const postComment = (e) => {
-    if (comment.trim().length === 0) return;
     e.preventDefault();
+
+    if (!image && !comment) {
+      // setAlert("Can't create an empty comment");
+      return;
+    }
     const body = new FormData();
     body.append("content", comment);
+
     if (image) {
       body.append("commentPhoto", image);
     }
+
     fetch(`${BASE_URL}/api/comments/post/${post._id}`, {
       method: "POST",
       headers: {
@@ -300,6 +307,12 @@ const Post = ({ post, preview, imagePreviewType }) => {
           </button>
           <section className="flex-1 border-b border-gray-300 dark:border-gray-600">
             <Scrollbars>
+              {comments.length === 0 && (
+                <Empty
+                  content="No comments to display"
+                  icon={<MdModeComment />}
+                />
+              )}
               {comments.map((comment) => {
                 return <Comment key={comment._id} comment={comment} />;
               })}

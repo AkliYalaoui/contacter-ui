@@ -57,6 +57,7 @@ const PostField = ({
           placeholder="type your comment here"
           value={val}
           onKeyUp={onKeyUp}
+          notRequired
         />
       </div>
       <button className="cursor-pointer border-l dark:border-gray-600 bg-primary  dark:bg-dark900 dark:text-primary text-white px-2 py-1">

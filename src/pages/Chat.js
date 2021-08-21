@@ -85,7 +85,11 @@ const Chat = () => {
   };
   const sendMessageHandler = (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+
+    if (!image && !message) {
+      // setMessagesError("Can't create an empty message");
+      return;
+    }
 
     const body = new FormData();
     body.append("content", message);
@@ -152,7 +156,7 @@ const Chat = () => {
   return (
     <div className="mt-4">
       {messagesError && (
-        <Error setOpen={messagesError} content={messagesError} />
+        <Error setOpen={setMessagesError} content={messagesError} />
       )}
       <section className="bg-gray-100 dark:bg-dark800 shadow text-gray-600 dark:text-white">
         {friend && !messagesError && (

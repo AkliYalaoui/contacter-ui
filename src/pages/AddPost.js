@@ -46,11 +46,16 @@ const AddPost = () => {
   const onPostHandler = (e) => {
     e.preventDefault();
 
+    if (!image && !content) {
+      setPostError("Can't create an empty post");
+      return;
+    }
     const body = new FormData();
-    body.append("content", content);
     if (image) {
       body.append("postPhoto", image);
     }
+
+    body.append("content", content);
 
     setPostLoading(true);
     //Post to our api
@@ -103,6 +108,7 @@ const AddPost = () => {
           <TextArea
             placeholder={`What's on your mind, ${user.userName}?`}
             value={content}
+            notRequired={true}
             onValueChanged={(val) => {
               setContent(val);
               setPostPreview({

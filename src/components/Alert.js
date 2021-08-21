@@ -2,7 +2,7 @@ import { FaBell, FaTimes } from "react-icons/fa";
 
 const Alert = ({ children, setOpen }) => {
   return (
-    <div className="text-gray-600 dark:text-white p-2 rounded fixed top-1 left-1/2 transform -translate-x-1/2 shadow-lg bg-white dark:bg-dark800">
+    <div className="text-gray-600 dark:text-white p-2 rounded fixed top-1 left-1/2 transform z-50 -translate-x-1/2 shadow-2xl bg-white dark:bg-dark800">
       <button
         onClick={(_) => setOpen(false)}
         className="ml-auto block cursor-pointer rounded-full p-3 hover:bg-gray-200 dark:hover:bg-dark900"
