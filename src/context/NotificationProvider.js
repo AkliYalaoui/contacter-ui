@@ -18,7 +18,7 @@ const NotificationProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    socket?.emit("join-notifications", `notifications-${user.id}`);
+    socket?.emit("join-room", user.id);
   }, [socket]);
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import Notification from "../pages/Notification";
 import EditProfile from "../pages/EditProfile";
 import RequestCounterProvider from "../context/RequestCounterProvider";
 import SocketProvider from "../context/SocketProvider";
+import VideoCallProvider from "../context/VideoCallProvider";
 import PostPage from "../pages/PostPage";
 import NotificationProvider from "../context/NotificationProvider";
 
@@ -20,40 +21,42 @@ const Layout = () => {
     <SocketProvider>
       <RequestCounterProvider>
         <NotificationProvider>
-        <Header />
-        <Nav />
-        <main className="pl-12 pr-2 py-2 max-w-2xl m-auto">
-          <Route path="/home">
-            <Home />
-          </Route>
-          <Route path="/post/:id">
-            <PostPage />
-          </Route>
-          <Route path="/settings">
-            <Settings />
-          </Route>
-          <Route path="/notification">
-            <Notification />
-          </Route>
-          <Route path="/add-post">
-            <AddPost />
-          </Route>
-          <Route path="/edit-profile">
-            <EditProfile />
-          </Route>
-          <Route path="/profile/:id">
-            <Profile />
-          </Route>
-          <Route path="/friend-request">
-            <FriendRequests />
-          </Route>
-          <Route path="/conversations" exact>
-            <Conversations />
-          </Route>
-          <Route path="/conversations/:id">
-            <Chat />
-          </Route>
-        </main>
+          <VideoCallProvider>
+            <Header />
+            <Nav />
+            <main className="pl-12 pr-2 py-2 max-w-2xl m-auto">
+              <Route path="/home">
+                <Home />
+              </Route>
+              <Route path="/post/:id">
+                <PostPage />
+              </Route>
+              <Route path="/settings">
+                <Settings />
+              </Route>
+              <Route path="/notification">
+                <Notification />
+              </Route>
+              <Route path="/add-post">
+                <AddPost />
+              </Route>
+              <Route path="/edit-profile">
+                <EditProfile />
+              </Route>
+              <Route path="/profile/:id">
+                <Profile />
+              </Route>
+              <Route path="/friend-request">
+                <FriendRequests />
+              </Route>
+              <Route path="/conversations" exact>
+                <Conversations />
+              </Route>
+              <Route path="/conversations/:id">
+                <Chat />
+              </Route>
+            </main>
+          </VideoCallProvider>
         </NotificationProvider>
       </RequestCounterProvider>
     </SocketProvider>

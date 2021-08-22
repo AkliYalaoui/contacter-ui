@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../context/AuthProvider";
+import { useVideoCall } from "../context/VideoCallProvider";
 import Empty from "../components/Empty";
 import { BsChatDotsFill } from "react-icons/bs";
 import Error from "../components/Error";
@@ -13,11 +14,13 @@ import PostField from "../components/PostField";
 import Message from "../components/Message";
 import Typing from "../components/Typing";
 import Loading from "../components/Loading";
+import VideoChat from "./VideoChat";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Chat = () => {
   const { user } = useAuth();
+  const videoCall = useVideoCall();
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [mounted, setMounted] = useState(false);
@@ -30,6 +33,7 @@ const Chat = () => {
   const { socket } = useSocket();
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [openVideo, setOpenVideo] = useState(false);
   const [imageType, setImageType] = useState("image");
 
   const fileChanged = (e) => {
@@ -150,11 +154,33 @@ const Chat = () => {
         );
       });
   }, [user.token, user.id, id]);
+
+  const MakeVideoCall = () => {
+    const videoChat = new Promise((resolve, reject) => {
+      setOpenVideo(true);
+      resolve();
+    });
+
+    videoChat.then(() => videoCall.callUser(friend._id));
+  };
+  const endCall = () => {
+    setOpenVideo(false);
+    videoCall.leaveCall();
+  };
+
   if (messageLoading) {
     return <Loading />;
   }
   return (
     <div className="mt-4">
+      {openVideo && videoCall.stream && (
+        <VideoChat
+          closeModal={endCall}
+          myVideo={videoCall.myVideo}
+          userVideo={videoCall.userVideo}
+          callRunning = {videoCall.callAccepeted && !videoCall.callEnded}
+        />
+      )}
       {messagesError && (
         <Error setOpen={setMessagesError} content={messagesError} />
       )}
@@ -172,7 +198,10 @@ const Chat = () => {
                 </Link>
                 <h3 className="font-semibold ">{friend?.userName}</h3>
               </div>
-              <button className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full">
+              <button
+                onClick={MakeVideoCall}
+                className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full"
+              >
                 <FaVideo size="20px" />
               </button>
             </header>

@@ -21,7 +21,7 @@ const RequestCounterProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    socket?.emit("join-requests", `requests-${user.id}`);
+    socket?.emit("join-room", user.id);
   }, [socket]);
 
   useEffect(() => {

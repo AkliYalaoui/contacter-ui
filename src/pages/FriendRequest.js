@@ -51,8 +51,7 @@ const FriendRequest = () => {
             })
           );
           setdeleteRequestMsg(data.msg);
-          socket.emit("join-requests", `requests-${id}`);
-          socket.emit("send-request", `requests-${id}`, data.request);
+          socket.emit("send-request", id, data.request);
         } else {
           setdeleteRequestError(data.error);
         }
@@ -109,18 +108,10 @@ const FriendRequest = () => {
           );
           setCounter((prev) => prev - 1);
           setacceptRequestMsg(data.msg);
-          socket.emit(
-            "join-notifications",
-            `notifications-${data.notification.to}`
-          );
-          socket.emit(
-            "send-notification",
-            `notifications-${data.notification.to}`,
-            {
-              ...data.notification,
-              from: data.from,
-            }
-          );
+          socket.emit("send-notification", data.notification.to, {
+            ...data.notification,
+            from: data.from,
+          });
         } else {
           setacceptRequestError(data.error);
         }
@@ -181,31 +172,31 @@ const FriendRequest = () => {
   return (
     <div className="mt-10">
       {acceptRequestMsg && (
-        <Alert setOpen={acceptRequestMsg}>
+        <Alert setOpen={setacceptRequestMsg}>
           <b className="capitalize">Done !</b>
           {acceptRequestMsg}
         </Alert>
       )}
       {deleteRequestError && (
-        <Error setOpen={deleteRequestError} content={deleteRequestError} />
+        <Error setOpen={setdeleteRequestError} content={deleteRequestError} />
       )}
       {deleteRequestMsg && (
-        <Alert>
+        <Alert setOpen={setdeleteRequestMsg}>
           <b className="capitalize">Done !</b>
           {deleteRequestMsg}
         </Alert>
       )}
       {acceptRequestError && (
-        <Error setOpen={acceptRequestError} content={acceptRequestError} />
+        <Error setOpen={setacceptRequestError} content={acceptRequestError} />
       )}
       {addRequestMsg && (
-        <Alert>
+        <Alert setOpen={setaddRequestMsg}>
           <b className="capitalize">Done !</b>
           {addRequestMsg}
         </Alert>
       )}
       {addRequestError && (
-        <Error setOpen={addRequestError} content={addRequestError} />
+        <Error setOpen={setaddRequestError} content={addRequestError} />
       )}
       <section>
         <h2 className="text-gray-600 dark:text-white font-semibold mb-4 p-2 border-b border-gray-200">

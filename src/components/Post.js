@@ -26,13 +26,17 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [imageType, setImageType] = useState("image");
   const { socket } = useSocket();
-
+  const [T_id] = useState(() => {
+    return post._id;
+  });
   useEffect(() => {
-    socket?.emit("join-post", `post-${post._id}`);
+    console.log(T_id);
+    socket?.emit("join-post", T_id);
   }, [socket]);
 
   useEffect(() => {
     const receiveComment = (id, c) => {
+      console.log(id);
       setComments((prev) => [c, ...prev]);
       setCommentsCount((prev) => prev + 1);
     };
@@ -42,6 +46,7 @@ const Post = ({ post, preview, imagePreviewType }) => {
 
   useEffect(() => {
     const receiveLike = (id, c) => {
+      console.log(id);
       if (c) {
         setLikes((l) => l + 1);
       } else {
@@ -82,23 +87,15 @@ const Post = ({ post, preview, imagePreviewType }) => {
         if (data.success) {
           console.log(data);
           if (data.liked) {
-            socket.emit(
-              "join-notifications",
-              `notifications-${data.notification.to}`
-            );
-            socket.emit(
-              "send-notification",
-              `notifications-${data.notification.to}`,
-              {
-                ...data.notification,
-                from: data.from,
-              }
-            );
+            socket.emit("send-notification", data.notification.to, {
+              ...data.notification,
+              from: data.from,
+            });
           }
         } else {
           console.log(data.error);
         }
-        socket.emit("send-like", `post-${post._id}`, data.liked);
+        socket.emit("send-like", T_id, data.liked);
       })
       .catch((err) => {
         console.log(err);
@@ -156,23 +153,14 @@ const Post = ({ post, preview, imagePreviewType }) => {
           setImagePreview(null);
           setCommentsCount((prev) => prev + 1);
           setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
-          socket.emit("send-comment", `post-${post._id}`, {
+          socket.emit("send-comment", post._id, {
             ...data.comment,
             userId: user,
           });
-
-          socket.emit(
-            "join-notifications",
-            `notifications-${data.notification.to}`
-          );
-          socket.emit(
-            "send-notification",
-            `notifications-${data.notification.to}`,
-            {
-              ...data.notification,
-              from: data.from,
-            }
-          );
+          socket.emit("send-notification", data.notification.to, {
+            ...data.notification,
+            from: data.from,
+          });
         } else {
           console.log(data.error);
           setAlert(data.error);
