@@ -8,15 +8,15 @@ const VideoChat = ({ closeModal, myVideo, userVideo, callRunning }) => {
         End Call
       </button>
       <div className="fixed top-0 left-0 h-full w-full z-30 flex flex-wrap">
-        {
+        {callRunning && (
           <video
-            className="flex-1 object-cover"
+            className="flex-1 object-cover max-w-sm m-auto"
             ref={userVideo}
             autoPlay
           ></video>
-        }
+        )}
         <video
-          className="flex-1 object-cover"
+          className="flex-1 object-cover max-w-sm m-auto"
           ref={myVideo}
           muted
           autoPlay

@@ -14,7 +14,7 @@ import PostField from "../components/PostField";
 import Message from "../components/Message";
 import Typing from "../components/Typing";
 import Loading from "../components/Loading";
-import VideoChat from "./VideoChat";
+import VideoChat from "../components/VideoChat";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -173,12 +173,12 @@ const Chat = () => {
   }
   return (
     <div className="mt-4">
-      {openVideo && videoCall.stream && (
+      {openVideo && videoCall.stream && !videoCall.callEnded && (
         <VideoChat
           closeModal={endCall}
           myVideo={videoCall.myVideo}
           userVideo={videoCall.userVideo}
-          callRunning = {videoCall.callAccepeted && !videoCall.callEnded}
+          callRunning={videoCall.callAccepted && !videoCall.callEnded}
         />
       )}
       {messagesError && (

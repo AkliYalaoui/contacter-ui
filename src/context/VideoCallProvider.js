@@ -3,6 +3,7 @@ import { useSocket } from "./SocketProvider";
 import { useAuth } from "./AuthProvider";
 import Peer from "simple-peer";
 import Alert from "../components/Alert";
+import VideoChat from "../components/VideoChat";
 
 const VideoCallContext = createContext();
 export const useVideoCall = (_) => useContext(VideoCallContext);
@@ -18,41 +19,54 @@ const VideoCallProvider = ({ children }) => {
   const userVideo = useRef();
   const connectionRef = useRef();
 
+  const [friendToCall, setFriendToCall] = useState();
+
   useEffect(() => {
     const onUserCalling = ({ from, name, signal }) => {
-      console.log({ from, name, signal });
       setCall({ isReceivingCall: true, from, name, signal });
     };
 
+    const onCallEnded = (id) => {
+      setCallEnded(true);
+      connectionRef.current && connectionRef.current.destroy();
+      window.location.reload();
+    };
+
+    socket?.on("call-canceled", onCallEnded);
     socket?.on("user-calling", onUserCalling);
     return () => {
       socket?.removeListener("user-calling", onUserCalling);
+      socket?.removeListener("call-canceled", onCallEnded);
     };
   }, [socket]);
 
   const answerCall = () => {
+    setCallAccepted(true);
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
         myVideo.current && (myVideo.current.srcObject = stream);
-        setCallAccepted(true);
         const peer = new Peer({ initiator: false, trickle: false, stream });
 
         peer.on("signal", (data) => {
           socket.emit("answer-call", { signal: data, to: call.from });
         });
 
-        peer.on("stream", (stream) => {
-          userVideo.current && (userVideo.current.srcObject = stream);
+        peer.on("stream", (s) => {
+          userVideo.current && (userVideo.current.srcObject = s);
         });
 
         peer.signal(call.signal);
         connectionRef.current = peer;
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
   const callUser = (userTocall) => {
+    setFriendToCall(userTocall);
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -69,22 +83,26 @@ const VideoCallProvider = ({ children }) => {
           });
         });
 
-        peer.on("stream", (stream) => {
-          userVideo.current && (userVideo.current.srcObject = stream);
+        peer.on("stream", (s) => {
+          userVideo.current && (userVideo.current.srcObject = s);
         });
 
         socket.on("call-accepted", (signal) => {
-          console.log(signal);
           setCallAccepted(true);
           peer.signal(signal);
         });
         connectionRef.current = peer;
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
   const leaveCall = () => {
+    socket.emit("call-ended", call.from ?? friendToCall);
     setCallEnded(true);
     connectionRef.current && connectionRef.current.destroy();
+    window.location.reload();
   };
 
   return (
@@ -121,6 +139,15 @@ const VideoCallProvider = ({ children }) => {
           </div>
         </Alert>
       )}
+      {callAccepted && !callEnded && (
+        <VideoChat
+          closeModal={leaveCall}
+          myVideo={myVideo}
+          userVideo={userVideo}
+          callRunning={callAccepted && !callEnded}
+        />
+      )}
+
       {children}
     </VideoCallContext.Provider>
   );
