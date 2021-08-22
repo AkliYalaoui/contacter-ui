@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { useAuth } from "./AuthProvider";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const RequestCounterContext = createContext();
 export const useRequestCounter = (_) => useContext(RequestCounterContext);
 
@@ -25,7 +27,7 @@ const RequestCounterProvider = ({ children }) => {
   }, [socket]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/friends/count", {
+    fetch(`${BASE_URL}/api/friends/count`, {
       headers: {
         "auth-token": user.token,
       },

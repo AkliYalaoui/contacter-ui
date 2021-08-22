@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useSocket } from "./SocketProvider";
 import { useAuth } from "./AuthProvider";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const NotificationContext = createContext();
 export const useNotification = (_) => useContext(NotificationContext);
 
@@ -22,7 +24,7 @@ const NotificationProvider = ({ children }) => {
   }, [socket]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/notifications", {
+    fetch(`${BASE_URL}/api/notifications`, {
       headers: {
         "auth-token": user.token,
       },
