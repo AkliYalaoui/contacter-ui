@@ -5,6 +5,7 @@ import Error from "../components/Error";
 import Empty from "../components/Empty";
 import Loading from "../components/Loading";
 import { ImSad } from "react-icons/im";
+import { useSocket } from "../context/SocketProvider";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -13,6 +14,43 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsError, setPostsError] = useState();
+  const { socket } = useSocket();
+
+  const setLikes = (id, count) => {
+    setPosts((prev) =>
+      prev.map((p) => {
+        if (p._id === id) {
+          console.log({ likes: p.likes, incr: count });
+          p.likes += count;
+        }
+        return p;
+      })
+    );
+  };
+
+  useEffect(() => {
+    const receiveLike = (postId, c) => {
+      if (c) setLikes(postId, 1);
+      else setLikes(postId, -1);
+    };
+    socket?.on("receive-like", receiveLike);
+    return () => socket?.removeListener("receive-like", receiveLike);
+  }, [socket]);
+
+  useEffect(() => {
+    const receiveComment = (postId, comment) => {
+      setPosts((prev) =>
+        prev.map((p) => {
+          if (p._id === postId) {
+            console.log(postId, comment);
+          }
+          return p;
+        })
+      );
+    };
+    socket?.on("receive-comment", receiveComment);
+    return () => socket?.removeListener("receive-comment", receiveComment);
+  }, [socket]);
 
   const deletePost = (id) => {
     setPosts((prev) =>
@@ -31,15 +69,18 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setPostsLoading(false);
-        if (data.success) setPosts(data.posts);
+        console.log(data.posts);
+        if (data.success)
+          setPosts(() => data.posts.map((post) => ({ ...post, likes: 0 })));
         else setPostsError(data.error);
+        setPostsLoading(false);
       })
       .catch((err) => {
         console.log(err);
         setPostsError("something went wrong, please try again");
       });
   }, []);
+
   if (postsLoading) {
     return <Loading />;
   }
@@ -51,7 +92,12 @@ const Home = () => {
           <Empty icon={<ImSad />} content={"No posts to display"} />
         )}
         {posts.map((post) => (
-          <Post key={post._id} onDelete={deletePost} post={post} />
+          <Post
+            key={post._id}
+            onDelete={deletePost}
+            post={post}
+            setLikes={setLikes}
+          />
         ))}
       </main>
     </div>

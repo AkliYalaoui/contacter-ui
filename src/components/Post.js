@@ -15,10 +15,9 @@ import { HiEmojiHappy } from "react-icons/hi";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const Post = ({ post, preview, onDelete, imagePreviewType }) => {
+const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
   const { user } = useAuth();
   const [openEmoji, setOpenEmoji] = useState(false);
-  const [likes, setLikes] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [openComments, setOpenComments] = useState(false);
@@ -29,40 +28,10 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [imageType, setImageType] = useState("image");
   const { socket } = useSocket();
-  const [T_id] = useState(() => {
-    return post._id;
-  });
 
   const onEmojiClick = (emoji) => {
     setComment((prev) => `${prev}${emoji}`);
   };
-
-  useEffect(() => {
-    socket?.emit("join-post", T_id);
-  }, [socket]);
-
-  useEffect(() => {
-    const receiveComment = (id, c) => {
-      console.log(id);
-      setComments((prev) => [c, ...prev]);
-      setCommentsCount((prev) => prev + 1);
-    };
-    socket?.on("receive-comment", receiveComment);
-    return () => socket?.removeListener("receive-comment", receiveComment);
-  }, [socket]);
-
-  useEffect(() => {
-    const receiveLike = (id, c) => {
-      console.log(id);
-      if (c) {
-        setLikes((l) => l + 1);
-      } else {
-        setLikes((l) => l - 1);
-      }
-    };
-    socket?.on("receive-like", receiveLike);
-    return () => socket?.removeListener("receive-like", receiveLike);
-  }, [socket]);
 
   const fileChanged = (e) => {
     if (e.target.files.length !== 0) {
@@ -95,13 +64,14 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
 
   const likeUnlike = (_) => {
     setLiked((prev) => {
-      if (prev) {
-        setLikes((l) => l - 1);
-      } else {
-        setLikes((l) => l + 1);
-      }
       return !prev;
     });
+
+    if (liked) {
+      setLikes(post._id, -1);
+    } else {
+      setLikes(post._id, 1);
+    }
 
     fetch(`${BASE_URL}/api/likes/post/${post._id}`, {
       method: "POST",
@@ -112,7 +82,6 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          console.log(data);
           if (data.liked) {
             socket.emit("send-notification", data.notification.to, {
               ...data.notification,
@@ -122,7 +91,10 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
         } else {
           console.log(data.error);
         }
-        socket.emit("send-like", T_id, data.liked);
+        post.userId.friends.forEach((friend) => {
+          socket.emit("send-like", friend, post._id, data.liked);
+        });
+        socket.emit("send-like", post.userId._id, post._id, data.liked);
       })
       .catch((err) => {
         console.log(err);
@@ -140,7 +112,7 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setLikes(data.countLikes);
+          setLikes(post._id, data.countLikes);
           setLiked(data.alreadyLiked);
         } else {
           console.log(data.error);
@@ -180,7 +152,13 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
           setImagePreview(null);
           setCommentsCount((prev) => prev + 1);
           setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
-          socket.emit("send-comment", post._id, {
+          post.userId.friends.forEach((friend) => {
+            socket.emit("send-comment", friend, post._id, {
+              ...data.comment,
+              userId: user,
+            });
+          });
+          socket.emit("send-comment", post.userId._id, post._id, {
             ...data.comment,
             userId: user,
           });
@@ -302,7 +280,7 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
           {!preview && (
             <>
               <div className="flex items-center space-x-2 ">
-                <span>{likes} likes</span>
+                <span>{post.likes} likes</span>
                 <button
                   className="hover:opacity-70 dark:hover:opacity-70"
                   onClick={likeUnlike}
