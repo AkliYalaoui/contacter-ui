@@ -19,6 +19,17 @@ const Profile = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState("");
 
+  const deletePost = (id) => {
+    setUserProfile((prev) => {
+      return {
+        ...prev,
+        posts: prev.posts.filter((post) => {
+          return post._id !== id;
+        }),
+      };
+    });
+  };
+
   useEffect(() => {
     setProfileLoading(true);
     fetch(`${BASE_URL}/api/users/get-user-info/${id}`, {
@@ -47,7 +58,7 @@ const Profile = () => {
 
   if (profileLoading || !userProfile || !person) return <Loading />;
   return (
-    <div className="my-10 relative text-gray-600 dark:text-white">
+    <div className="my-10 py-10 relative text-gray-600 dark:text-white">
       {profileError && (
         <Error content={profileError} setOpen={setProfileError} />
       )}
@@ -112,7 +123,13 @@ const Profile = () => {
         )}
         <div>
           {userProfile.posts.map((post) => {
-            return <Post key={post._id} post={{ ...post, userId: person }} />;
+            return (
+              <Post
+                key={post._id}
+                onDelete={deletePost}
+                post={{ ...post, userId: person }}
+              />
+            );
           })}
         </div>
       </section>

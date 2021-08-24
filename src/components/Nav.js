@@ -34,11 +34,11 @@ const Nav = () => {
         </Li>
         <Li>
           <Link to="/notification">
-                      <div className="relative">
+            <div className="relative">
               <span className="absolute text-xs -right-2 z-10 -top-2 text-red-600 font-bold">
                 {notificationsCounter}
               </span>
-                <FaBell />
+              <FaBell />
             </div>
           </Link>
         </Li>

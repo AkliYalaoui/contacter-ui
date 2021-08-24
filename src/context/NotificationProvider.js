@@ -31,10 +31,13 @@ const NotificationProvider = ({ children }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setNotifications(data.notifications);
-          setNotificationsCounter(data.notifications.length);
+          setNotificationsCounter(() => {
+            return data.notifications.filter(
+              (notification) => notification.read !== true
+            ).length;
+          });
         } else {
           console.log(data.error);
         }

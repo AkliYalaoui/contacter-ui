@@ -15,12 +15,15 @@ import Message from "../components/Message";
 import Typing from "../components/Typing";
 import Loading from "../components/Loading";
 import VideoChat from "../components/VideoChat";
+import EmojiPicker from "../components/EmojiPicker";
+import { HiEmojiHappy } from "react-icons/hi";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Chat = () => {
   const { user } = useAuth();
   const videoCall = useVideoCall();
+  const [openEmoji, setOpenEmoji] = useState(false);
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [mounted, setMounted] = useState(false);
@@ -35,6 +38,10 @@ const Chat = () => {
   const [imagePreview, setImagePreview] = useState("");
   const [openVideo, setOpenVideo] = useState(false);
   const [imageType, setImageType] = useState("image");
+
+  const onEmojiClick = (emoji) => {
+    setMessage((prev) => `${prev}${emoji}`);
+  };
 
   const fileChanged = (e) => {
     if (e.target.files.length !== 0) {
@@ -240,20 +247,37 @@ const Chat = () => {
                   )}
                 </Scrollbars>
               </section>
-              <footer className="shadow">
-                <PostField
-                  onChanged={(val) => userTyping(val)}
-                  val={message}
-                  OnFileChanged={fileChanged}
-                  onSubmit={sendMessageHandler}
-                  imagePreview={imagePreview}
-                  setImage={setImage}
-                  setImagePreview={setImagePreview}
-                  imageType={imageType}
-                  onKeyUp={() => userNotTyping()}
-                >
-                  <MdSend />
-                </PostField>
+              <footer className="shadow relative flex items-center">
+                <div className="mx-1">
+                  <button
+                    type="button"
+                    onClick={(_) => {
+                      setOpenEmoji((prev) => !prev);
+                    }}
+                  >
+                    <HiEmojiHappy color="orange" />
+                  </button>
+                </div>
+                <div className="flex-1">
+                  <PostField
+                    onChanged={(val) => userTyping(val)}
+                    val={message}
+                    OnFileChanged={fileChanged}
+                    onSubmit={sendMessageHandler}
+                    imagePreview={imagePreview}
+                    setImage={setImage}
+                    setImagePreview={setImagePreview}
+                    imageType={imageType}
+                    onKeyUp={() => userNotTyping()}
+                  >
+                    <MdSend />
+                  </PostField>
+                </div>
+                {openEmoji && (
+                  <div className="absolute bottom-10 right-0 z-40">
+                    <EmojiPicker onEmojiClick={onEmojiClick} />
+                  </div>
+                )}
               </footer>
             </main>
           </>

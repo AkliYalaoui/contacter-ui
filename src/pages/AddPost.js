@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthProvider";
 import { MdPublic, MdPublish } from "react-icons/md";
 import TextArea from "../components/TextArea";
 import { useState } from "react";
-import Picker from "emoji-picker-react";
+import EmojiPicker from "../components/EmojiPicker";
 import { HiEmojiHappy } from "react-icons/hi";
 import { BsCardImage } from "react-icons/bs";
 import Post from "../components/Post";
@@ -31,8 +31,8 @@ const AddPost = () => {
     content: "",
   });
 
-  const onEmojiClick = (event, emojiObject) => {
-    setContent((prev) => `${prev}${emojiObject.emoji}`);
+  const onEmojiClick = (emoji) => {
+    setContent((prev) => `${prev}${emoji}`);
   };
   const fileChanged = (e) => {
     if (e.target.files.length !== 0) {
@@ -138,7 +138,7 @@ const AddPost = () => {
                 accept="image/*,video/*"
               />
             </div>
-            <div className="relative">
+            <div>
               <button
                 type="button"
                 onClick={(_) => setOpenEmoji((prev) => !prev)}
@@ -146,11 +146,6 @@ const AddPost = () => {
               >
                 <HiEmojiHappy color="orange" /> <span>emoji</span>
               </button>
-              {openEmoji && (
-                <div className="absolute top-12 right-0 z-20">
-                  <Picker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
             </div>
           </footer>
           <div className="absolute top-0 right-0" title="post">
@@ -158,6 +153,11 @@ const AddPost = () => {
               <MdPublish />
             </Button>
           </div>
+          {openEmoji && (
+            <div className="absolute top-full right-0 z-20">
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </div>
+          )}
         </form>
       </section>
       <section className="mt-10">

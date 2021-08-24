@@ -1,5 +1,5 @@
 import moment from "moment";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaTrash } from "react-icons/fa";
 import { AiFillHeart } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
@@ -10,11 +10,14 @@ import { MdModeComment } from "react-icons/md";
 import { useSocket } from "../context/SocketProvider";
 import Alert from "./Alert";
 import Empty from "./Empty";
+import EmojiPicker from "./EmojiPicker";
+import { HiEmojiHappy } from "react-icons/hi";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const Post = ({ post, preview, imagePreviewType }) => {
+const Post = ({ post, preview, onDelete, imagePreviewType }) => {
   const { user } = useAuth();
+  const [openEmoji, setOpenEmoji] = useState(false);
   const [likes, setLikes] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
   const [liked, setLiked] = useState(false);
@@ -29,8 +32,12 @@ const Post = ({ post, preview, imagePreviewType }) => {
   const [T_id] = useState(() => {
     return post._id;
   });
+
+  const onEmojiClick = (emoji) => {
+    setComment((prev) => `${prev}${emoji}`);
+  };
+
   useEffect(() => {
-    console.log(T_id);
     socket?.emit("join-post", T_id);
   }, [socket]);
 
@@ -64,6 +71,26 @@ const Post = ({ post, preview, imagePreviewType }) => {
       setImagePreview(URL.createObjectURL(file));
       setImageType(file.type.split("/")[0]);
     }
+  };
+
+  const deletePost = () => {
+    fetch(`${BASE_URL}/api/posts/${post._id}`, {
+      method: "DELETE",
+      headers: {
+        "auth-token": user.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          onDelete(post._id);
+        } else {
+          console.log(data.error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const likeUnlike = (_) => {
@@ -200,18 +227,29 @@ const Post = ({ post, preview, imagePreviewType }) => {
           <b className="capitalize">Error!</b> {alert}
         </Alert>
       )}
-      <header className="p-2 flex space-x-2 items-center border-b border-gray-200 dark:border-gray-600">
-        <img
-          alt="profile"
-          className="w-8 h-8 rounded-full object-cover"
-          src={`${BASE_URL}/api/users/image/${post.userId.profilePhoto}`}
-        />
-        <div className="">
-          <h3 className="font-bold text-sm -mb-2">{post.userId.userName}</h3>
-          <span className="text-xs">
-            {moment(new Date(post.createdAt)).fromNow()}
-          </span>
+      <header className="p-2 flex space-x-2 justify-between items-center border-b border-gray-200 dark:border-gray-600">
+        <div className="flex space-x-2 items-center">
+          <img
+            alt="profile"
+            className="w-8 h-8 rounded-full object-cover"
+            src={`${BASE_URL}/api/users/image/${post.userId.profilePhoto}`}
+          />
+          <div className="">
+            <h3 className="font-bold text-sm -mb-2">{post.userId.userName}</h3>
+            <span className="text-xs">
+              {moment(new Date(post.createdAt)).fromNow()}
+            </span>
+          </div>
         </div>
+        {post.userId._id === user.id && onDelete && (
+          <button
+            title="delete this post"
+            className="hover:opacity-80"
+            onClick={deletePost}
+          >
+            <FaTrash />
+          </button>
+        )}
       </header>
       <main>
         <p className="p-2 mb-4  text-sm sm:text-md">{post.content}</p>
@@ -306,19 +344,34 @@ const Post = ({ post, preview, imagePreviewType }) => {
               })}
             </Scrollbars>
           </section>
-          <footer>
-            <PostField
-              onChanged={setComment}
-              val={comment}
-              OnFileChanged={fileChanged}
-              onSubmit={postComment}
-              imagePreview={imagePreview}
-              setImage={setImage}
-              setImagePreview={setImagePreview}
-              imageType={imageType}
-            >
-              <MdModeComment />
-            </PostField>
+          <footer className="relative flex items-center">
+            <div className="mx-1">
+              <button
+                type="button"
+                onClick={(_) => setOpenEmoji((prev) => !prev)}
+              >
+                <HiEmojiHappy color="orange" />
+              </button>
+            </div>
+            <div className="flex-1">
+              <PostField
+                onChanged={setComment}
+                val={comment}
+                OnFileChanged={fileChanged}
+                onSubmit={postComment}
+                imagePreview={imagePreview}
+                setImage={setImage}
+                setImagePreview={setImagePreview}
+                imageType={imageType}
+              >
+                <MdModeComment />
+              </PostField>
+            </div>
+            {openEmoji && (
+              <div className="absolute top-full h-40 w-40 right-0 z-20">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
           </footer>
         </aside>
       )}

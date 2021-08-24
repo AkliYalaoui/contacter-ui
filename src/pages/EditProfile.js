@@ -52,7 +52,7 @@ const EditProfile = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          updateUser((prev) => ({ ...data.user, token: prev.token }));
+          updateUser({ ...data.user, token: user.token });
           setAlert(data.msg);
         } else {
           setError(data.error);
@@ -67,7 +67,7 @@ const EditProfile = () => {
     <div className="mt-10">
       {error && <Error setOpen={error} content={error} />}
       {alert && (
-        <Alert setOpen={alert}>
+        <Alert setOpen={setAlert}>
           <b className="capitalize">Done !</b>
           {alert}
         </Alert>

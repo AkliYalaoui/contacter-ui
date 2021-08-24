@@ -14,6 +14,14 @@ const Home = () => {
   const [postsLoading, setPostsLoading] = useState(false);
   const [postsError, setPostsError] = useState();
 
+  const deletePost = (id) => {
+    setPosts((prev) =>
+      prev.filter((post) => {
+        return post._id !== id;
+      })
+    );
+  };
+
   useEffect(() => {
     setPostsLoading(true);
     fetch(`${BASE_URL}/api/posts/`, {
@@ -43,7 +51,7 @@ const Home = () => {
           <Empty icon={<ImSad />} content={"No posts to display"} />
         )}
         {posts.map((post) => (
-          <Post key={post._id} post={post} />
+          <Post key={post._id} onDelete={deletePost} post={post} />
         ))}
       </main>
     </div>

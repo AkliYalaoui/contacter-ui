@@ -3,15 +3,40 @@ import { Link } from "react-router-dom";
 import Empty from "../components/Empty";
 import { useNotification } from "../context/NotificationProvider";
 import { ImSad } from "react-icons/im";
+import { useEffect } from "react";
+import { useAuth } from "../context/AuthProvider";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Notification = () => {
-  const { notifications, setNotifications } = useNotification();
+  const { notifications, setNotificationsCounter } = useNotification();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/api/notifications/read`, {
+      method: "PUT",
+      headers: {
+        "auth-token": user.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setNotificationsCounter(0);
+        } else {
+          console.log(data.error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [user.token]);
 
   return (
     <div className="my-10">
-      {notifications.length === 0 && <Empty icon={<ImSad/>} content="No notification to display " />}
+      {notifications.length === 0 && (
+        <Empty icon={<ImSad />} content="No notification to display " />
+      )}
       {notifications.map((notification) => (
         <div
           key={notification._id}
