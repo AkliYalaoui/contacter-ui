@@ -122,6 +122,7 @@ const Chat = () => {
           socket.emit("send-message", id, data.message);
           scrollbars.current.scrollToBottom();
           setMessage("");
+          setOpenEmoji(false);
           setImage(null);
           setImagePreview(null);
         } else setMessagesError(data.error);

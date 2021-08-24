@@ -72,6 +72,7 @@ const AddPost = () => {
         if (data.success) {
           console.log(data);
           setPostMsg("Post created successfully");
+          setOpenEmoji(false);
         } else {
           setPostError(data.error);
         }

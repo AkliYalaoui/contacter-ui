@@ -1,4 +1,5 @@
 import { useRef, useEffect, createElement } from "react";
+import "emoji-picker-element";
 
 const EmojiPicker = ({ onEmojiClick }) => {
   const ref = useRef(null);

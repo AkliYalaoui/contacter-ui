@@ -153,7 +153,6 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
 
   const postComment = (e) => {
     e.preventDefault();
-
     if (!image && !comment) {
       // setAlert("Can't create an empty comment");
       return;
@@ -177,6 +176,7 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
         if (data.success) {
           setComment("");
           setImage(null);
+          setOpenEmoji(false);
           setImagePreview(null);
           setCommentsCount((prev) => prev + 1);
           setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
@@ -368,7 +368,7 @@ const Post = ({ post, preview, onDelete, imagePreviewType }) => {
               </PostField>
             </div>
             {openEmoji && (
-              <div className="absolute top-full h-40 w-40 right-0 z-20">
+              <div className="absolute top-full right-0 z-20">
                 <EmojiPicker onEmojiClick={onEmojiClick} />
               </div>
             )}
