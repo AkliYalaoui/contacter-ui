@@ -135,7 +135,7 @@ const Chat = () => {
         if (data.success) {
           setMessages((prev) => [...prev, data.message]);
           socket.emit("send-message", id, data.message);
-          socket.emit("send-message", friend._id, data.message, {
+          socket.emit("send-message-notification", friend._id, data.message, {
             userName: user.userName,
             profilePhoto: user.profilePhoto,
           });

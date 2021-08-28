@@ -1,48 +1,40 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthProvider";
 import Conversation from "../components/Conversation";
 import Empty from "../components/Empty";
 import { BsChatDotsFill } from "react-icons/bs";
 import Error from "../components/Error";
 import Loading from "../components/Loading";
-
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+import { useOnlineUsers } from "../context/ConversationProvider";
 
 const Conversations = () => {
-  const { user } = useAuth();
-  const [conversations, setConversations] = useState([]);
-  const [conversationsError, setConversationsError] = useState();
-  const [conversationsLoading, setConversationsLoading] = useState(false);
-  
-  useEffect(() => {
-    setConversationsLoading(true);
-    fetch(`${BASE_URL}/api/conversations`, {
-      headers: {
-        "auth-token": user.token,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setConversationsLoading(false);
-        if (data.success) setConversations(data.conversations);
-        else setConversationsError(data.error);
-      })
-      .catch((err) => {
-        console.log(err);
-        setConversationsError(
-          "something went wrong while trying to get the conversations,please try again"
-        );
-      });
-  }, [user.token]);
+  const {
+    onlineUsers,
+    conversations,
+    conversationsError,
+    conversationsLoading,
+  } = useOnlineUsers();
+
   if (conversationsLoading) {
     return <Loading />;
   }
 
   return (
     <section className="mt-10">
+      {/* {onlineUsers.length === 0 && (
+        <div className="mb-8 bg-gray-200 p-2 rounded dark:bg-dark800 text-center text-gray-600 dark:text-white">
+          None of your friends is online
+        </div>
+      )}
+      <div>
+        {onlineUsers.map((u) => (
+          <div key={u.id}>
+            <h4>{u.userName}</h4>
+          </div>
+        ))}
+      </div> */}
       {conversationsError && (
         <Error setOpen={conversationsError} content={conversationsError} />
       )}
+
       {conversations.length === 0 && (
         <Empty
           icon={<BsChatDotsFill />}

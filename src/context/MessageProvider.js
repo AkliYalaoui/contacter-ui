@@ -11,12 +11,13 @@ const MessageProvider = ({ children }) => {
   const { socket } = useSocket();
 
   useEffect(() => {
-    const receiveMessage = (m, u) => {
+    const receiveMsg = (m, u) => {
       setMessage(m);
       setMessageUser(u);
     };
-    socket?.on("receive-message", receiveMessage);
-    return () => socket?.removeListener("receive-message", receiveMessage);
+    socket?.on("receive-message-notification", receiveMsg);
+    return () =>
+      socket?.removeListener("receive-message-notification", receiveMsg);
   }, [socket]);
 
   return (
