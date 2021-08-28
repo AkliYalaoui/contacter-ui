@@ -33,7 +33,7 @@ const FormInput = ({
           placeholder={placeholder ? placeholder : ""}
           onKeyUp={onKeyUp}
           onChange={(e) => onValueChanged(e.target.value)}
-          className="text-gray-600 dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-6"
+          className="text-gray-600 w-full dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-8"
         />
       ) : (
         <input
@@ -43,7 +43,7 @@ const FormInput = ({
           placeholder={placeholder ? placeholder : ""}
           onKeyUp={onKeyUp}
           onChange={(e) => onValueChanged(e.target.value)}
-          className="text-gray-600 dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-6"
+          className="text-gray-600 dark:text-white border-b dark:bg-dark900 border-gray-300 dark:border-gray-600 outline-none focus:border-primary py-2 px-8"
         />
       )}
 

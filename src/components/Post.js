@@ -15,15 +15,20 @@ import { HiEmojiHappy } from "react-icons/hi";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
+const Post = ({
+  post,
+  preview,
+  setLikes,
+  setComments,
+  onDelete,
+  imagePreviewType,
+}) => {
   const { user } = useAuth();
   const [openEmoji, setOpenEmoji] = useState(false);
-  const [commentsCount, setCommentsCount] = useState(0);
   const [liked, setLiked] = useState(false);
   const [openComments, setOpenComments] = useState(false);
   const [comment, setComment] = useState("");
   const [alert, setAlert] = useState();
-  const [comments, setComments] = useState([]);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [imageType, setImageType] = useState("image");
@@ -61,7 +66,6 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
         console.log(err);
       });
   };
-
   const likeUnlike = (_) => {
     setLiked((prev) => {
       return !prev;
@@ -150,8 +154,7 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
           setImage(null);
           setOpenEmoji(false);
           setImagePreview(null);
-          setCommentsCount((prev) => prev + 1);
-          setComments((prev) => [{ ...data.comment, userId: user }, ...prev]);
+          setComments(post._id, { ...data.comment, userId: user });
           post.userId.friends.forEach((friend) => {
             socket.emit("send-comment", friend, post._id, {
               ...data.comment,
@@ -187,8 +190,7 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setComments(data.comments);
-          setCommentsCount(data.comments.length);
+          setComments(post._id, data.comments, true);
         } else {
           console.log(data.error);
         }
@@ -209,7 +211,7 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
         <div className="flex space-x-2 items-center">
           <img
             alt="profile"
-            className="w-8 h-8 rounded-full object-cover"
+            className="w-8 h-8 rounded-full object-contain"
             src={`${BASE_URL}/api/users/image/${post.userId.profilePhoto}`}
           />
           <div className="">
@@ -221,7 +223,7 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
         </div>
         {post.userId._id === user.id && onDelete && (
           <button
-            title="delete this post"
+            title="update this post"
             className="hover:opacity-80"
             onClick={deletePost}
           >
@@ -236,12 +238,12 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
             imagePreviewType === "video" ? (
               <video
                 src={preview}
-                className="object-cover max-h-96 m-auto block w-full"
+                className="object-contain max-h-96 m-auto block w-full"
                 controls
               ></video>
             ) : (
               <img
-                className="object-cover max-h-96 m-auto block w-full"
+                className="object-contain max-h-96 m-auto block w-full"
                 src={preview}
               />
             )
@@ -249,12 +251,12 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
             post.image.type === "video" ? (
               <video
                 src={`${BASE_URL}/api/posts/image/${post.image.url}`}
-                className="object-cover max-h-96 m-auto block w-full"
+                className="object-contain max-h-96 m-auto block w-full"
                 controls
               ></video>
             ) : (
               <img
-                className="object-cover max-h-96 m-auto block w-full"
+                className="object-contain max-h-96 m-auto block w-full"
                 src={`${BASE_URL}/api/posts/image/${post.image.url}`}
               />
             )
@@ -289,7 +291,7 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
                 </button>
               </div>
               <div className="flex items-center space-x-2 ">
-                <span>{commentsCount} comments</span>
+                <span>{post.comments?.length} comments</span>
                 <button
                   className="hover:opacity-70 dark:hover:opacity-70"
                   onClick={(_) => setOpenComments(true)}
@@ -311,13 +313,13 @@ const Post = ({ post, preview, setLikes, onDelete, imagePreviewType }) => {
           </button>
           <section className="flex-1 border-b border-gray-300 dark:border-gray-600">
             <Scrollbars>
-              {comments.length === 0 && (
+              {post.comments?.length === 0 && (
                 <Empty
                   content="No comments to display"
                   icon={<MdModeComment />}
                 />
               )}
-              {comments.map((comment) => {
+              {post.comments?.map((comment) => {
                 return <Comment key={comment._id} comment={comment} />;
               })}
             </Scrollbars>

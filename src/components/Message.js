@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaTimes } from "react-icons/fa";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -7,7 +8,7 @@ const Message = ({ message, user, person }) => {
 
   useEffect(() => {
     if (!message.image || !message?.image?.url) return;
-    
+
     fetch(`${BASE_URL}/api/conversations/image/${message.image.url}`, {
       headers: {
         "auth-token": user.token,
@@ -24,13 +25,15 @@ const Message = ({ message, user, person }) => {
 
   return (
     <div
-      className={`flex my-4 items-start ${
+      className={`flex p-2 my-3 items-start ${
         message.sender === user.id ? "flex-row-reverse" : ""
       }`}
     >
       <img
         alt="profile"
-        className="w-8 h-8 rounded-full"
+        className={`w-6 h-6 object-contain rounded-full ${
+          message.sender === user.id ? "mr-1" : ""
+        }`}
         src={`${BASE_URL}/api/users/image/${person.profilePhoto}`}
       />
       <div
@@ -38,25 +41,28 @@ const Message = ({ message, user, person }) => {
           message.sender === user.id ? "items-end" : ""
         }`}
       >
-        <p
-          className={`bg-white dark:bg-dark900 shadow py-1 px-2 rounded w-max ${
-            message.sender === user.id ? "mr-2" : "ml-2"
-          }`}
-        >
-          {message.content}
-        </p>
-        <div className="my-2">
-          {message.hasImage === true &&
-            (message.image.type === "video" ? (
+        {message.content && (
+          <p
+            className={`bg-white dark:bg-dark900 shadow py-1 px-2 rounded max-w-xs break-all ${
+              message.sender === user.id ? "mr-1" : "ml-1"
+            }`}
+          >
+            {message.content}
+          </p>
+        )}
+        {message.hasImage === true && (
+          <div className={`m-1`}>
+            {message.image.type === "video" ? (
               <video
                 src={`${image}`}
-                className="object-cover w-28 h-28"
+                className={`object-contain h-36 w-36`}
                 controls
               ></video>
             ) : (
-              <img className="object-cover w-28 h-28" src={`${image}`} />
-            ))}
-        </div>
+              <img className={`object-contain h-36 w-36`} src={`${image}`} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

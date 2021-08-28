@@ -48,7 +48,7 @@ const Notification = () => {
           <div className="flex items-start">
             <img
               alt="profile"
-              className="w-8 h-8 rounded-full object-cover mr-2"
+              className="w-8 h-8 rounded-full object-contain mr-2"
               src={`${BASE_URL}/api/users/image/${notification.from.profilePhoto}`}
             />
             <div>

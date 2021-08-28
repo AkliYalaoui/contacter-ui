@@ -17,12 +17,12 @@ const Comment = ({ comment }) => {
           (comment.image.type === "video" ? (
             <video
               src={`${BASE_URL}/api/comments/image/${comment.image.url}`}
-              className="object-cover w-28 h-28 m-auto"
+              className="object-contain w-28 h-28 m-auto"
               controls
             ></video>
           ) : (
             <img
-              className="object-cover w-28 h-28 m-auto"
+              className="object-contain w-28 h-28 m-auto"
               src={`${BASE_URL}/api/comments/image/${comment.image.url}`}
             />
           ))}

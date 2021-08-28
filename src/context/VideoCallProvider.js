@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState, createContext } from "react";
 import { useSocket } from "./SocketProvider";
 import { useAuth } from "./AuthProvider";
 import Peer from "simple-peer";
-import Alert from "../components/Alert";
+import VideoCallAlert from "../components/VideoCallAlert";
 import VideoChat from "../components/VideoChat";
 
 const VideoCallContext = createContext();
@@ -22,8 +22,8 @@ const VideoCallProvider = ({ children }) => {
   const [friendToCall, setFriendToCall] = useState();
 
   useEffect(() => {
-    const onUserCalling = ({ from, name, signal }) => {
-      setCall({ isReceivingCall: true, from, name, signal });
+    const onUserCalling = ({ from, name, signal,profilePhoto }) => {
+      setCall({ isReceivingCall: true, from, name, signal,profilePhoto });
     };
 
     const onCallEnded = (id) => {
@@ -80,6 +80,7 @@ const VideoCallProvider = ({ children }) => {
             signalData: data,
             from: user.id,
             name: user.userName,
+            profilePhoto:user.profilePhoto
           });
         });
 
@@ -119,25 +120,11 @@ const VideoCallProvider = ({ children }) => {
       }}
     >
       {call.isReceivingCall && !callEnded && !callAccepted && (
-        <Alert setOpen={leaveCall}>
-          <p className="dark:bg-dark900 dark:text-white p-1 rounded">
-            {call.name} is calling ...
-          </p>
-          <div className="flex justify-between flex-wrap mt-2">
-            <button
-              className="bg-primary text-white cursor-pointer p-1 rounded"
-              onClick={answerCall}
-            >
-              Answer
-            </button>
-            <button
-              className="bg-red-600 text-white cursor-pointer p-1 rounded"
-              onClick={leaveCall}
-            >
-              Decline
-            </button>
-          </div>
-        </Alert>
+        <VideoCallAlert
+          onAnswer={answerCall}
+          onCancel={leaveCall}
+          call={call}
+        />
       )}
       {callAccepted && !callEnded && (
         <VideoChat

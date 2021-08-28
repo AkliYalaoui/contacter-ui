@@ -72,7 +72,7 @@ const Profile = () => {
       <section className=" flex flex-wrap items-center justify-center">
         <img
           alt="profile"
-          className="w-36 h-36 rounded-full object-cover shadow-inner border border-primary transform -translate-y-8 p-1"
+          className="w-36 h-36 rounded-full object-contain shadow-inner border border-primary transform -translate-y-8 p-1"
           src={`${BASE_URL}/api/users/image/${userProfile.profilePhoto}`}
         />
         <div className="p-3 text-center">
@@ -104,7 +104,7 @@ const Profile = () => {
                 <div className="rounded border w-32  border-gray-300 dark:border-gray-600 shadow-lg text-center">
                   <img
                     alt="profile"
-                    className="w-32 h-32 object-cover m-auto"
+                    className="w-32 h-32 object-contain m-auto"
                     src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
                   />
                   <h3 className="p-2">{friend.userName}</h3>

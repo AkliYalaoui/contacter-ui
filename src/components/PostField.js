@@ -54,7 +54,7 @@ const PostField = ({
       <div className="-mx-2 flex-1 min-w-0">
         <FormInput
           onValueChanged={(v) => onChanged(v)}
-          placeholder="type your comment here"
+          placeholder="type here"
           value={val}
           onKeyUp={onKeyUp}
           notRequired

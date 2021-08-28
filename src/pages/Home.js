@@ -16,16 +16,45 @@ const Home = () => {
   const [postsError, setPostsError] = useState();
   const { socket } = useSocket();
 
-  const setLikes = (id, count) => {
-    setPosts((prev) =>
-      prev.map((p) => {
-        if (p._id === id) {
-          console.log({ likes: p.likes, incr: count });
-          p.likes += count;
+  const setComments = (id, comment,setC = false) => {
+    setPosts((prev) => {
+      let i = 0;
+      let element;
+      for (let index = 0; index < prev.length; index++) {
+        element = { ...prev[index] };
+        if (element._id === id) {
+          i = index;
+          break;
         }
-        return p;
-      })
-    );
+      }
+
+      const tmp = [...prev];
+      if (setC) {
+        tmp[i] = { ...element, comments: comment };
+      } else {
+        tmp[i] = { ...element, comments: [comment, ...element.comments] };
+      }
+
+      return [...tmp];
+    });
+  };
+  const setLikes = (id, count) => {
+    setPosts((prev) => {
+      let i = 0;
+      let element;
+      for (let index = 0; index < prev.length; index++) {
+        element = { ...prev[index] };
+        if (element._id === id) {
+          i = index;
+          break;
+        }
+      }
+
+      const tmp = [...prev];
+      tmp[i] = { ...element, likes: element.likes + count };
+
+      return [...tmp];
+    });
   };
 
   useEffect(() => {
@@ -39,14 +68,7 @@ const Home = () => {
 
   useEffect(() => {
     const receiveComment = (postId, comment) => {
-      setPosts((prev) =>
-        prev.map((p) => {
-          if (p._id === postId) {
-            console.log(postId, comment);
-          }
-          return p;
-        })
-      );
+      setComments(postId, comment);
     };
     socket?.on("receive-comment", receiveComment);
     return () => socket?.removeListener("receive-comment", receiveComment);
@@ -71,7 +93,9 @@ const Home = () => {
       .then((data) => {
         console.log(data.posts);
         if (data.success)
-          setPosts(() => data.posts.map((post) => ({ ...post, likes: 0 })));
+          setPosts(() =>
+            data.posts.map((post) => ({ ...post, likes: 0, comments: [] }))
+          );
         else setPostsError(data.error);
         setPostsLoading(false);
       })
@@ -97,6 +121,7 @@ const Home = () => {
             onDelete={deletePost}
             post={post}
             setLikes={setLikes}
+            setComments={setComments}
           />
         ))}
       </main>

@@ -9,7 +9,7 @@ const Suggestion = ({ person, onAddFriend }) => {
       <div className="flex space-x-3 items-start">
         <img
           alt="profile"
-          className="w-12 cursor-pointer h-12 rounded-full"
+          className="w-12 cursor-pointer h-12 rounded-full object-contain"
           src={`${BASE_URL}/api/users/image/${person.profilePhoto}`}
         />
         <div className="flex-1">

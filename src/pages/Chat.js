@@ -2,7 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../context/AuthProvider";
 import { useVideoCall } from "../context/VideoCallProvider";
 import Empty from "../components/Empty";
-import { BsChatDotsFill } from "react-icons/bs";
+import {
+  BsChatDotsFill,
+  BsFillInfoCircleFill,
+  BsCardImage,
+} from "react-icons/bs";
 import Error from "../components/Error";
 import { useParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars";
@@ -17,6 +21,8 @@ import Loading from "../components/Loading";
 import VideoChat from "../components/VideoChat";
 import EmojiPicker from "../components/EmojiPicker";
 import { HiEmojiHappy } from "react-icons/hi";
+import FormInput from "../components/FormInput";
+import Button from "../components/Button";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -24,6 +30,7 @@ const Chat = () => {
   const { user } = useAuth();
   const videoCall = useVideoCall();
   const [openEmoji, setOpenEmoji] = useState(false);
+  const [openParams, setOpenParams] = useState(false);
   const { id } = useParams();
   const [messages, setMessages] = useState([]);
   const [mounted, setMounted] = useState(false);
@@ -31,6 +38,14 @@ const Chat = () => {
   const [friend, setFriend] = useState();
   const [messagesError, setMessagesError] = useState();
   const [message, setMessage] = useState("");
+  const [nickNameA, setNickNameA] = useState(user.userName);
+  const [nickNameB, setNickNameB] = useState("");
+  const [background, setBackground] = useState("");
+  const [updateChat, setUpdateChat] = useState({
+    nickNameA: "",
+    nickNameB: "",
+    background: "",
+  });
   const [messageLoading, setMessageLoading] = useState(false);
   const [typing, setTyping] = useState("");
   const { socket } = useSocket();
@@ -120,6 +135,10 @@ const Chat = () => {
         if (data.success) {
           setMessages((prev) => [...prev, data.message]);
           socket.emit("send-message", id, data.message);
+          socket.emit("send-message", friend._id, data.message, {
+            userName: user.userName,
+            profilePhoto: user.profilePhoto,
+          });
           scrollbars.current.scrollToBottom();
           setMessage("");
           setOpenEmoji(false);
@@ -145,12 +164,38 @@ const Chat = () => {
       .then((data) => {
         setMessageLoading(false);
         if (data.success) {
-          console.log(data.conversation.messages);
+          setUpdateChat(() => {
+            let a, b;
+
+            a =
+              data.conversation.member_a._id === user.id
+                ? data.conversation.nickName_a
+                : data.conversation.nickName_b;
+            b =
+              data.conversation.member_a._id === user.id
+                ? data.conversation.nickName_b
+                : data.conversation.nickName_a;
+            return {
+              nickNameA: a,
+              nickNameB: b,
+              background: "",
+            };
+          });
           setMessages(data.conversation.messages);
+          setBackground(data.conversation.background);
           setFriend(() => {
             if (data.conversation.member_b._id === user.id)
               return data.conversation.member_a;
             return data.conversation.member_b;
+          });
+          setNickNameB(() => {
+            if (data.conversation.member_b._id === user.id)
+              return data.conversation.nickName_a
+                ? data.conversation.nickName_a
+                : data.conversation.member_a.userName;
+            return data.conversation.nickName_b
+              ? data.conversation.nickName_b
+              : data.conversation.member_b.userName;
           });
           setMounted(true);
         } else setMessagesError(data.error);
@@ -176,6 +221,64 @@ const Chat = () => {
     videoCall.leaveCall();
   };
 
+  const customizeChat = () => {
+    setOpenParams((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const chatUpdated = (data) => {
+      setNickNameA(data.nickName_b);
+      setNickNameB(data.nickName_a);
+      setBackground(data.background);
+      setUpdateChat({
+        nickNameA: data.nickName_b,
+        nickNameB: data.nickName_a,
+        background: updateChat.background,
+      });
+    };
+    socket?.on("chat-updated", chatUpdated);
+    return () => socket?.removeListener("chat-updated", chatUpdated);
+  }, [socket]);
+
+  const updateConversation = (e) => {
+    e.preventDefault();
+
+    const body = new FormData();
+    if (updateChat.nickNameA.trim().length > 0) {
+      body.append("nickName_a", updateChat.nickNameA.trim());
+    }
+    if (updateChat.nickNameB.trim().length > 0) {
+      body.append("nickName_b", updateChat.nickNameB.trim());
+    }
+    if (updateChat.background) {
+      body.append("background", updateChat.background);
+    }
+
+    fetch(`${BASE_URL}/api/conversations/${id}`, {
+      method: "PUT",
+      headers: {
+        "auth-token": user.token,
+      },
+      body,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setNickNameA(data.nickName_a);
+          setNickNameB(data.nickName_b);
+          setUpdateChat({ ...updateChat, background: "" });
+          setBackground(data.background);
+          //emit socket event
+          socket.emit("chat-update", id, data);
+          setOpenParams(false);
+        } else {
+          console.log(data.error);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   if (messageLoading) {
     return <Loading />;
   }
@@ -195,23 +298,98 @@ const Chat = () => {
       <section className="bg-gray-100 dark:bg-dark800 shadow text-gray-600 dark:text-white">
         {friend && !messagesError && (
           <>
-            <header className="py-1 sm:py-2 px-4 justify-between flex items-center shadow">
+            <header className="py-1 relative sm:py-2 px-4 justify-between flex items-center shadow">
               <div className="space-x-4 flex items-start">
                 <Link to={`/profile/${friend._id}`}>
                   <img
                     alt="profile"
-                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                    className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-full"
                     src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
                   />
                 </Link>
-                <h3 className="font-semibold ">{friend?.userName}</h3>
+                <h3 className="font-semibold ">{nickNameB}</h3>
               </div>
-              <button
-                onClick={MakeVideoCall}
-                className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full"
-              >
-                <FaVideo size="20px" />
-              </button>
+              <div className="flex">
+                <button
+                  onClick={MakeVideoCall}
+                  className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full"
+                >
+                  <FaVideo size="20px" />
+                </button>
+                <div className="relative">
+                  <button
+                    className="cursor-pointer text-primary hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-full"
+                    onClick={customizeChat}
+                  >
+                    <BsFillInfoCircleFill size="20px" />
+                  </button>
+                  {openParams && (
+                    <div className="shadow-lg z-50 absolute top-10 right-0 bg-white dark:bg-dark800 p-2 rounded w-60">
+                      <form className="space-y-2" onSubmit={updateConversation}>
+                        <FormInput
+                          type={"text"}
+                          value={updateChat.nickNameA}
+                          onValueChanged={(val) =>
+                            setUpdateChat((prev) => ({
+                              ...prev,
+                              nickNameA: val,
+                            }))
+                          }
+                        >
+                          <img
+                            alt="profile"
+                            className="w-6 h-6  object-contain rounded-full"
+                            src={`${BASE_URL}/api/users/image/${user.profilePhoto}`}
+                          />
+                        </FormInput>
+                        <FormInput
+                          type={"text"}
+                          value={updateChat.nickNameB}
+                          onValueChanged={(val) =>
+                            setUpdateChat((prev) => ({
+                              ...prev,
+                              nickNameB: val,
+                            }))
+                          }
+                        >
+                          <img
+                            alt="profile"
+                            className="w-6 h-6  object-contain rounded-full"
+                            src={`${BASE_URL}/api/users/image/${friend.profilePhoto}`}
+                          />
+                        </FormInput>
+                        <div className="mt-3">
+                          <label
+                            htmlFor="bg"
+                            type="button"
+                            className="cursor-pointer capitalize flex items-center"
+                          >
+                            <span className="pr-2">background</span>
+                            <BsCardImage />
+                          </label>
+                          <input
+                            onChange={(e) => {
+                              if (e.target.files.length > 0) {
+                                setUpdateChat((prev) => ({
+                                  ...prev,
+                                  background: e.target.files[0],
+                                }));
+                              }
+                            }}
+                            id="bg"
+                            type="file"
+                            className="sr-only"
+                            accept="image/*"
+                          />
+                        </div>
+                        <Button classes="bg-primary block mr-auto mt-4 ml-auto">
+                          Save
+                        </Button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              </div>
             </header>
             <main className="relative">
               {messages.length === 0 && (
@@ -220,7 +398,21 @@ const Chat = () => {
                   content={"No messages to display"}
                 />
               )}
-              <section className="p-2 sm:p-4" style={{ height: "58vh" }}>
+              <section
+                className="p-2 sm:p-4"
+                style={{
+                  height: "58vh",
+                  backgroundImage: `${
+                    background
+                      ? `url(${BASE_URL}/api/conversations/background/${background})`
+                      : ""
+                  }`,
+                  backgroundPosition: "center",
+                  backgroundAttachment: "fixed",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                }}
+              >
                 <Scrollbars ref={scrollbars}>
                   {messages.map((message) => {
                     const person =
@@ -248,7 +440,7 @@ const Chat = () => {
                   )}
                 </Scrollbars>
               </section>
-              <footer className="shadow relative flex items-center">
+              <footer className="shadow relative flex items-center overflow-auto">
                 <div className="mx-1">
                   <button
                     type="button"

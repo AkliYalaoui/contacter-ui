@@ -42,7 +42,7 @@ const Header = () => {
   const buttonContent = (
     <img
       alt="profile"
-      className="w-10 cursor-pointer h-10 rounded-full"
+      className="w-10 cursor-pointer object-contain h-10 rounded-full"
       src={`${BASE_URL}/api/users/image/${user.profilePhoto}`}
     />
   );

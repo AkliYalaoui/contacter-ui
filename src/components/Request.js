@@ -10,7 +10,7 @@ const Request = ({ person, onConfirmRequest, onDeleteRequest }) => {
       <div className="flex space-x-3 items-start">
         <img
           alt="profile"
-          className="w-14 cursor-pointer h-14 rounded-full"
+          className="w-14 cursor-pointer h-14 rounded-full object-contain"
           src={`${BASE_URL}/api/users/image/${person.requester.profilePhoto}`}
         />
         <div className="flex-1">
