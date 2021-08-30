@@ -1,6 +1,9 @@
 # Contacter - A social media application - Front End part
 
-This project is a social media application (PWA application made with react js and tailwindcss as a front end and powered by an express server and a mongoodb database) [Visite the app](https://contacter-app.netlify.app).
+This project is a social media application (PWA application made with react js and tailwindcss as a front end and powered by an express server and a mongoodb database) [Visite the app](https://contacter-app.netlify.app).\
+
+Note 1 : this project is only for learning and practicing purposes.\
+Note 2 : the images you upload the app will disappear after some times, because they are stored temporarliy in the heroku server
 
 ## Available Features
 
@@ -25,13 +28,13 @@ Dark mode is supported
 
 ### Used packages (Front End)
 
-emoji-picker-element
-moment
-react-router-dom
-react-toggle
-simple-peer
-socket.io-client
-react-icons
+emoji-picker-element.\
+moment.\
+react-router-dom.\
+react-toggle.\
+simple-peer.\
+socket.io-client.\
+react-icons.\
 
 ### After cloning this project
 
